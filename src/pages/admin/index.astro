@@ -1,0 +1,1123 @@
+---
+import { SITE_CONFIG } from '../../config';
+const config = SITE_CONFIG;
+---
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>管理后台 - Senmoo</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: #0f1117;
+      color: #e8e8f0;
+      min-height: 100vh;
+      display: flex;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    /* ===== Sidebar ===== */
+    .sidebar {
+      width: 240px;
+      background: #161822;
+      border-right: 1px solid rgba(255,255,255,0.06);
+      padding: 24px 0;
+      flex-shrink: 0;
+      min-height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+    }
+    .sidebar-brand {
+      padding: 0 24px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 16px;
+    }
+    .sidebar-brand h2 {
+      font-size: 1rem; font-weight: 700;
+      background: linear-gradient(135deg, #7C3AED, #EC4899, #F97316);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .sidebar-brand p { font-size: 0.75rem; color: #6b7280; margin-top: 4px; }
+    .sidebar-nav { display: flex; flex-direction: column; gap: 2px; padding: 0 12px; }
+    .sidebar-item {
+      padding: 10px 16px; border-radius: 8px;
+      font-size: 0.88rem; color: #9ca3af;
+      cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sidebar-item:hover { background: rgba(255,255,255,0.04); color: #e8e8f0; }
+    .sidebar-item.active {
+      background: rgba(124,58,237,0.12);
+      color: #c4b5fd;
+    }
+    .sidebar-item .icon { font-size: 1rem; width: 20px; text-align: center; }
+
+    /* ===== Main Content ===== */
+    .main {
+      flex: 1;
+      padding: 32px 48px;
+      overflow-y: auto;
+      margin-left: 240px;
+    }
+    .main-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 32px;
+    }
+    .main-header h1 { font-size: 1.5rem; font-weight: 700; }
+    .main-header .breadcrumb { font-size: 0.8rem; color: #6b7280; margin-bottom: 4px; }
+
+    /* ===== Config Card ===== */
+    .config-card {
+      background: #1a1c28;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 640px;
+    }
+    .config-card h3 {
+      font-size: 1.1rem; font-weight: 600; margin-bottom: 4px;
+    }
+    .config-card .card-desc {
+      font-size: 0.85rem; color: #6b7280; margin-bottom: 28px;
+    }
+
+    /* ===== Toggle Row ===== */
+    .toggle-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 0;
+      border-top: 1px solid rgba(255,255,255,0.04);
+    }
+    .toggle-row:first-of-type { border-top: none; padding-top: 0; }
+    .toggle-info h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
+    .toggle-info p { font-size: 0.8rem; color: #6b7280; }
+
+    /* ===== Toggle Switch ===== */
+    .toggle-switch {
+      position: relative; width: 48px; height: 26px;
+      cursor: pointer; flex-shrink: 0;
+    }
+    .toggle-switch input { display: none; }
+    .toggle-track {
+      position: absolute; inset: 0;
+      background: #2a2d3a;
+      border-radius: 13px;
+      transition: background 0.3s;
+    }
+    .toggle-switch input:checked + .toggle-track {
+      background: linear-gradient(135deg, #7C3AED, #EC4899);
+    }
+    .toggle-knob {
+      position: absolute; top: 3px; left: 3px;
+      width: 20px; height: 20px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.3s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .toggle-switch input:checked ~ .toggle-knob {
+      transform: translateX(22px);
+    }
+
+    /* ===== Social Links Section ===== */
+    .social-section {
+      background: #1a1c28;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 640px;
+      margin-top: 24px;
+    }
+    .social-section h3 {
+      font-size: 1.1rem; font-weight: 600; margin-bottom: 4px;
+    }
+    .social-section .card-desc {
+      font-size: 0.85rem; color: #6b7280; margin-bottom: 24px;
+    }
+    .input-group {
+      margin-bottom: 16px;
+    }
+    .input-group label {
+      display: block; font-size: 0.85rem; color: #9ca3af; margin-bottom: 6px;
+    }
+    .input-group input {
+      width: 100%; padding: 10px 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      color: #e8e8f0; font-size: 0.88rem;
+      outline: none; transition: border-color 0.2s;
+    }
+    .input-group input:focus {
+      border-color: rgba(124,58,237,0.5);
+    }
+    .input-group input::placeholder {
+      color: #6b7280;
+    }
+
+    /* ===== Status Badge ===== */
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 12px; border-radius: 999px;
+      font-size: 0.75rem; font-weight: 500;
+      margin-top: 24px;
+    }
+    .status-badge.off {
+      background: rgba(107,114,128,0.15);
+      color: #6b7280;
+    }
+    .status-badge.on {
+      background: rgba(52,211,153,0.1);
+      color: #34d399;
+    }
+    .status-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* ===== Save Bar ===== */
+    .save-bar {
+      margin-top: 28px;
+      display: flex; gap: 12px; align-items: center;
+    }
+    .btn-save {
+      padding: 10px 28px; border-radius: 10px;
+      background: linear-gradient(135deg, #7C3AED, #EC4899);
+      color: #fff; font-size: 0.9rem; font-weight: 600;
+      border: none; cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-save:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(124,58,237,0.3);
+    }
+    .btn-cancel {
+      padding: 10px 20px; border-radius: 10px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #9ca3af; font-size: 0.9rem;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-cancel:hover { border-color: rgba(255,255,255,0.15); color: #e8e8f0; }
+    .btn-generate {
+      padding: 10px 28px; border-radius: 10px;
+      background: linear-gradient(135deg, #7C3AED, #EC4899);
+      color: #fff; font-size: 0.9rem; font-weight: 600;
+      border: none; cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-generate:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(124,58,237,0.3);
+    }
+    .btn-copy {
+      padding: 10px 20px; border-radius: 10px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #9ca3af; font-size: 0.9rem;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-copy:hover { border-color: rgba(255,255,255,0.15); color: #e8e8f0; }
+
+    /* ===== Config Output ===== */
+    .config-output {
+      background: #1a1c28;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 640px;
+      margin-top: 24px;
+      display: none;
+    }
+    .config-output.show { display: block; }
+    .config-output .output-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 16px;
+    }
+    .config-output .output-header h3 { font-size: 0.95rem; font-weight: 600; }
+    .config-output .output-header span { font-size: 0.75rem; color: #6b7280; }
+    .config-output pre {
+      padding: 20px;
+      background: #0f1117;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      overflow-x: auto;
+      font-size: 0.78rem;
+      color: #9ca3af;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    }
+    .output-actions {
+      margin-top: 16px;
+      display: flex; gap: 12px;
+    }
+
+    /* ===== Toast ===== */
+    .toast {
+      position: fixed; bottom: 32px; right: 32px;
+      padding: 14px 24px; border-radius: 12px;
+      background: #1a1c28;
+      border: 1px solid rgba(52,211,153,0.3);
+      color: #34d399; font-size: 0.88rem;
+      display: none; align-items: center; gap: 8px;
+      animation: toastIn 0.3s ease;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      z-index: 9999;
+    }
+    .toast.show { display: flex; }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== Admin Note ===== */
+    .admin-note {
+      margin-top: 32px;
+      padding: 20px 24px;
+      background: rgba(124,58,237,0.06);
+      border: 1px solid rgba(124,58,237,0.15);
+      border-radius: 12px;
+      max-width: 640px;
+    }
+    .admin-note h4 {
+      font-size: 0.85rem; font-weight: 600; color: #c4b5fd;
+      margin-bottom: 8px;
+    }
+    .admin-note p {
+      font-size: 0.8rem; color: #9ca3af; line-height: 1.7;
+    }
+    .admin-note code {
+      background: rgba(255,255,255,0.06);
+      padding: 2px 6px; border-radius: 4px;
+      font-size: 0.78rem; color: #c4b5fd;
+    }
+
+    /* ===== Section Panels ===== */
+    .section-panel { display: none; }
+    .section-panel.active { display: block; }
+
+    /* ===== Content Table ===== */
+    .content-toolbar {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 20px; max-width: 800px;
+    }
+    .search-input {
+      padding: 8px 14px; background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08); border-radius: 10px;
+      color: #e8e8f0; font-size: 0.85rem; outline: none; width: 240px;
+      transition: border-color 0.2s;
+    }
+    .search-input:focus { border-color: rgba(124,58,237,0.5); }
+    .search-input::placeholder { color: #6b7280; }
+    .btn-add {
+      padding: 8px 20px; border-radius: 10px;
+      background: linear-gradient(135deg, #7C3AED, #EC4899);
+      color: #fff; font-size: 0.85rem; font-weight: 600;
+      border: none; cursor: pointer; transition: all 0.3s;
+    }
+    .btn-add:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(124,58,237,0.3); }
+    .content-table {
+      width: 100%; max-width: 800px;
+      background: #1a1c28; border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px; overflow: hidden;
+    }
+    .content-table table { width: 100%; border-collapse: collapse; }
+    .content-table th {
+      text-align: left; padding: 14px 20px; font-size: 0.78rem;
+      color: #6b7280; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.5px; background: rgba(255,255,255,0.02);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .content-table td {
+      padding: 16px 20px; font-size: 0.88rem;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .content-table tr:last-child td { border-bottom: none; }
+    .content-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .content-title-cell { display: flex; flex-direction: column; gap: 2px; }
+    .content-title-cell .title { font-weight: 500; color: #e8e8f0; }
+    .content-title-cell .cat { font-size: 0.75rem; color: #6b7280; }
+    .status-badge-sm {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 999px;
+      font-size: 0.72rem; font-weight: 500;
+    }
+    .status-badge-sm.published { background: rgba(52,211,153,0.1); color: #34d399; }
+    .status-badge-sm.draft { background: rgba(251,191,36,0.1); color: #fbbf24; }
+    .action-btns { display: flex; gap: 8px; }
+    .btn-edit, .btn-del {
+      padding: 5px 12px; border-radius: 6px; font-size: 0.78rem;
+      cursor: pointer; transition: all 0.2s; border: none;
+    }
+    .btn-edit {
+      background: rgba(124,58,237,0.1); color: #c4b5fd; border: 1px solid rgba(124,58,237,0.2);
+    }
+    .btn-edit:hover { background: rgba(124,58,237,0.2); }
+    .btn-del {
+      background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.2);
+    }
+    .btn-del:hover { background: rgba(239,68,68,0.2); }
+
+    /* ===== Stats Grid ===== */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px; max-width: 900px; margin-bottom: 24px;
+    }
+    .stat-card {
+      background: #1a1c28; border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px; padding: 24px; position: relative; overflow: hidden;
+    }
+    .stat-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    }
+    .stat-card.purple::before { background: linear-gradient(90deg, #7C3AED, #A78BFA); }
+    .stat-card.pink::before { background: linear-gradient(90deg, #EC4899, #F472B6); }
+    .stat-card.orange::before { background: linear-gradient(90deg, #F97316, #FB923C); }
+    .stat-card.green::before { background: linear-gradient(90deg, #10B981, #34D399); }
+    .stat-label { font-size: 0.8rem; color: #6b7280; margin-bottom: 8px; }
+    .stat-value { font-size: 1.8rem; font-weight: 700; color: #e8e8f0; }
+    .stat-change { font-size: 0.75rem; margin-top: 6px; }
+    .stat-change.up { color: #34d399; }
+    .stat-change.down { color: #f87171; }
+
+    /* ===== Chart Card ===== */
+    .chart-card {
+      background: #1a1c28; border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px; padding: 28px; max-width: 900px; margin-bottom: 24px;
+    }
+    .chart-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 24px; }
+    .chart-bars {
+      display: flex; align-items: flex-end; gap: 12px; height: 160px; padding-top: 8px;
+    }
+    .chart-bar-col {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%;
+      justify-content: flex-end;
+    }
+    .chart-bar {
+      width: 100%; max-width: 40px; border-radius: 6px 6px 2px 2px;
+      background: linear-gradient(180deg, #7C3AED, rgba(124,58,237,0.3));
+      transition: all 0.3s; cursor: pointer; min-height: 4px;
+    }
+    .chart-bar:hover {
+      background: linear-gradient(180deg, #EC4899, rgba(236,72,153,0.3));
+      transform: scaleY(1.05); transform-origin: bottom;
+    }
+    .chart-bar-label { font-size: 0.7rem; color: #6b7280; }
+
+    /* ===== Activity List ===== */
+    .activity-card {
+      background: #1a1c28; border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px; padding: 28px; max-width: 900px;
+    }
+    .activity-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 16px; }
+    .activity-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    }
+    .activity-dot.purple { background: #7C3AED; }
+    .activity-dot.pink { background: #EC4899; }
+    .activity-dot.green { background: #10B981; }
+    .activity-text { font-size: 0.85rem; color: #e8e8f0; flex: 1; }
+    .activity-time { font-size: 0.75rem; color: #6b7280; flex-shrink: 0; }
+
+    /* ===== Page List ===== */
+    .page-list { max-width: 800px; display: flex; flex-direction: column; gap: 8px; }
+    .page-item {
+      display: flex; align-items: center; gap: 16px;
+      background: #1a1c28; border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px; padding: 16px 20px;
+      transition: all 0.2s;
+    }
+    .page-item:hover { border-color: rgba(255,255,255,0.1); }
+    .page-item .drag-handle {
+      color: #4b5563; cursor: grab; font-size: 0.9rem; user-select: none;
+      line-height: 1;
+    }
+    .page-item .page-info { flex: 1; }
+    .page-item .page-name { font-size: 0.92rem; font-weight: 500; margin-bottom: 2px; }
+    .page-item .page-path { font-size: 0.78rem; color: #6b7280; font-family: 'SF Mono', 'Fira Code', monospace; }
+    .page-item .page-status {
+      font-size: 0.75rem; padding: 3px 10px; border-radius: 999px; font-weight: 500;
+    }
+    .page-item .page-status.live { background: rgba(52,211,153,0.1); color: #34d399; }
+    .page-item .page-status.hidden { background: rgba(107,114,128,0.15); color: #6b7280; }
+    .page-item .page-actions { display: flex; gap: 6px; }
+    .btn-move {
+      width: 28px; height: 28px; border-radius: 6px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
+      color: #9ca3af; cursor: pointer; font-size: 0.78rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .btn-move:hover { background: rgba(255,255,255,0.08); color: #e8e8f0; }
+    .page-toggle { position: relative; width: 40px; height: 22px; cursor: pointer; flex-shrink: 0; }
+    .page-toggle input { display: none; }
+    .page-toggle .toggle-track {
+      position: absolute; inset: 0; background: #2a2d3a;
+      border-radius: 11px; transition: background 0.3s;
+    }
+    .page-toggle input:checked + .toggle-track {
+      background: linear-gradient(135deg, #7C3AED, #EC4899);
+    }
+    .page-toggle .toggle-knob {
+      position: absolute; top: 2px; left: 2px;
+      width: 18px; height: 18px; background: #fff;
+      border-radius: 50%; transition: transform 0.3s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    .page-toggle input:checked ~ .toggle-knob { transform: translateX(18px); }
+
+    /* ===== Modal ===== */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px); z-index: 200;
+      display: none; align-items: center; justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: #1a1c28; border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px; padding: 32px; width: 480px; max-width: 90vw;
+      animation: modalIn 0.25s ease;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.95) translateY(8px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 24px; }
+    .modal .input-group { margin-bottom: 16px; }
+    .modal .input-group label { display: block; font-size: 0.85rem; color: #9ca3af; margin-bottom: 6px; }
+    .modal .input-group input, .modal .input-group select, .modal .input-group textarea {
+      width: 100%; padding: 10px 14px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px; color: #e8e8f0; font-size: 0.88rem;
+      outline: none; transition: border-color 0.2s; font-family: inherit;
+    }
+    .modal .input-group textarea { min-height: 80px; resize: vertical; }
+    .modal .input-group select { cursor: pointer; }
+    .modal .input-group select option { background: #1a1c28; }
+    .modal .input-group input:focus, .modal .input-group select:focus,
+    .modal .input-group textarea:focus { border-color: rgba(124,58,237,0.5); }
+    .modal-actions { display: flex; gap: 12px; margin-top: 24px; justify-content: flex-end; }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 24px 20px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .content-toolbar { flex-direction: column; gap: 12px; }
+      .search-input { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h2>Senmoo</h2>
+      <p>Admin Panel</p>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-item active" data-section="config" onclick="switchSection('config')">
+        <span class="icon">&#9881;</span> 站点配置
+      </div>
+      <div class="sidebar-item" data-section="content" onclick="switchSection('content')">
+        <span class="icon">&#128196;</span> 内容管理
+      </div>
+      <div class="sidebar-item" data-section="stats" onclick="switchSection('stats')">
+        <span class="icon">&#128200;</span> 数据统计
+      </div>
+      <div class="sidebar-item" data-section="pages" onclick="switchSection('pages')">
+        <span class="icon">&#128279;</span> 页面管理
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+
+    <!-- ========== Section: 站点配置 ========== -->
+    <div class="section-panel active" id="section-config">
+      <div class="main-header">
+        <div>
+          <div class="breadcrumb">站点配置 / 功能开关</div>
+          <h1>功能开关</h1>
+        </div>
+      </div>
+
+      <div class="config-card">
+        <h3>页面模块控制</h3>
+        <p class="card-desc">控制前台网站各功能模块的显示与隐藏。修改后生成新配置替换源文件即可。</p>
+
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <h4>博客模块</h4>
+            <p>开启后，前台将显示博客导航入口、博客页面及首页相关内容</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="blogToggle" data-initial={config.modules.blog ? 'true' : 'false'}>
+            <div class="toggle-track"></div>
+            <div class="toggle-knob"></div>
+          </label>
+        </div>
+
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <h4>AI产品模块</h4>
+            <p>开启后，前台将显示AI产品导航入口及产品页面</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toolsToggle" data-initial={config.modules.decisionLens ? 'true' : 'false'}>
+            <div class="toggle-track"></div>
+            <div class="toggle-knob"></div>
+          </label>
+        </div>
+
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <h4>关于我模块</h4>
+            <p>开启后，前台将显示关于我导航入口及个人介绍页面</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="aboutToggle" data-initial={config.modules.about ? 'true' : 'false'}>
+            <div class="toggle-track"></div>
+            <div class="toggle-knob"></div>
+          </label>
+        </div>
+
+        <div id="statusBadge" class="status-badge" data-initial-class={config.modules.blog ? 'on' : 'off'}>
+          <span class="status-dot"></span>
+          <span id="statusText">{config.modules.blog ? '博客模块已开启 — 前台可见' : '博客模块已关闭 — 前台不显示'}</span>
+        </div>
+
+        <div class="save-bar">
+          <button class="btn-save" onclick="saveConfig()">保存配置</button>
+          <button class="btn-cancel" onclick="resetConfig()">重置</button>
+        </div>
+      </div>
+
+      <div class="social-section">
+        <h3>社交链接</h3>
+        <p class="card-desc">配置前台展示的社交联系方式。</p>
+        <div class="input-group">
+          <label>微信号</label>
+          <input type="text" id="input-wechat" value={config.social.wechat} placeholder="请输入微信号" />
+        </div>
+        <div class="input-group">
+          <label>邮箱</label>
+          <input type="email" id="input-email" value={config.social.email} placeholder="请输入邮箱地址" />
+        </div>
+        <div class="input-group">
+          <label>抖音链接</label>
+          <input type="url" id="input-douyin" value={config.social.douyin} placeholder="请输入抖音链接" />
+        </div>
+      </div>
+
+      <div class="config-output" id="configOutput">
+        <div class="output-header">
+          <h3>src/config.ts</h3>
+          <span>复制后替换项目中的源文件，重新构建部署即可</span>
+        </div>
+        <pre id="configCode"></pre>
+        <div class="output-actions">
+          <button class="btn-generate" onclick="copyConfig()">复制配置代码</button>
+        </div>
+      </div>
+
+      <div class="admin-note">
+        <h4>&#128161; 工作原理说明</h4>
+        <p>
+          这个管理面板控制着前台网站的功能开关和社交链接。修改配置后，点击「保存配置」生成新的配置代码，
+          复制后替换项目中的 <code>src/config.ts</code> 文件，重新执行 <code>npm run build</code> 并部署即可生效。
+        </p>
+        <p style="margin-top:8px;">
+          你也可以在这里扩展更多开关，比如：多语言、评论区、Newsletter 订阅等。
+        </p>
+      </div>
+    </div>
+
+    <!-- ========== Section: 内容管理 ========== -->
+    <div class="section-panel" id="section-content">
+      <div class="main-header">
+        <div>
+          <div class="breadcrumb">内容管理 / 文章列表</div>
+          <h1>内容管理</h1>
+        </div>
+      </div>
+      <div class="content-toolbar">
+        <input type="text" class="search-input" id="contentSearch" placeholder="搜索内容..." oninput="filterContent()" />
+        <button class="btn-add" onclick="openContentModal()">+ 新建内容</button>
+      </div>
+      <div class="content-table">
+        <table>
+          <thead>
+            <tr>
+              <th>标题</th>
+              <th>状态</th>
+              <th>日期</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="contentTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========== Section: 数据统计 ========== -->
+    <div class="section-panel" id="section-stats">
+      <div class="main-header">
+        <div>
+          <div class="breadcrumb">数据统计 / 概览</div>
+          <h1>数据统计</h1>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card purple">
+          <div class="stat-label">总访问量</div>
+          <div class="stat-value">0</div>
+          <div class="stat-change">暂无数据</div>
+        </div>
+        <div class="stat-card pink">
+          <div class="stat-label">页面浏览</div>
+          <div class="stat-value">0</div>
+          <div class="stat-change">暂无数据</div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-label">独立访客</div>
+          <div class="stat-value">0</div>
+          <div class="stat-change">暂无数据</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-label">平均停留</div>
+          <div class="stat-value">0s</div>
+          <div class="stat-change">暂无数据</div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h3>近7天访问趋势</h3>
+        <div class="chart-bars" id="chartBars"></div>
+      </div>
+      <div class="activity-card">
+        <h3>最近动态</h3>
+        <div id="activityList">
+          <div style="padding:24px 0;text-align:center;color:#6b7280;font-size:0.85rem;">暂无动态</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== Section: 页面管理 ========== -->
+    <div class="section-panel" id="section-pages">
+      <div class="main-header">
+        <div>
+          <div class="breadcrumb">页面管理 / 所有页面</div>
+          <h1>页面管理</h1>
+        </div>
+      </div>
+      <div class="page-list" id="pageList">
+        <div class="page-item" data-page="home">
+          <span class="drag-handle">&#9776;</span>
+          <div class="page-info">
+            <div class="page-name">首页</div>
+            <div class="page-path">/</div>
+          </div>
+          <span class="page-status live">上线</span>
+          <div class="page-actions">
+            <button class="btn-move" onclick="movePage('home','up')" title="上移">&#9650;</button>
+            <button class="btn-move" onclick="movePage('home','down')" title="下移">&#9660;</button>
+          </div>
+          <label class="page-toggle">
+            <input type="checkbox" checked onchange="togglePageVisibility('home', this.checked)">
+            <div class="toggle-track"></div>
+            <div class="toggle-knob"></div>
+          </label>
+        </div>
+        <div class="page-item" data-page="about">
+          <span class="drag-handle">&#9776;</span>
+          <div class="page-info">
+            <div class="page-name">关于我</div>
+            <div class="page-path">/about</div>
+          </div>
+          <span class="page-status live">上线</span>
+          <div class="page-actions">
+            <button class="btn-move" onclick="movePage('about','up')" title="上移">&#9650;</button>
+            <button class="btn-move" onclick="movePage('about','down')" title="下移">&#9660;</button>
+          </div>
+          <label class="page-toggle">
+            <input type="checkbox" checked onchange="togglePageVisibility('about', this.checked)">
+            <div class="toggle-track"></div>
+            <div class="toggle-knob"></div>
+          </label>
+        </div>
+        <div class="page-item" data-page="tools">
+          <span class="drag-handle">&#9776;</span>
+          <div class="page-info">
+            <div class="page-name">AI产品</div>
+            <div class="page-path">/tools</div>
+          </div>
+          <span class="page-status live">上线</span>
+          <div class="page-actions">
+            <button class="btn-move" onclick="movePage('tools','up')" title="上移">&#9650;</button>
+            <button class="btn-move" onclick="movePage('tools','down')" title="下移">&#9660;</button>
+          </div>
+          <label class="page-toggle">
+            <input type="checkbox" checked onchange="togglePageVisibility('tools', this.checked)">
+            <div class="toggle-track"></div>
+            <div class="toggle-knob"></div>
+          </label>
+        </div>
+        <div class="page-item" data-page="blog">
+          <span class="drag-handle">&#9776;</span>
+          <div class="page-info">
+            <div class="page-name">博客</div>
+            <div class="page-path">/blog</div>
+          </div>
+          <span class="page-status hidden">隐藏</span>
+          <div class="page-actions">
+            <button class="btn-move" onclick="movePage('blog','up')" title="上移">&#9650;</button>
+            <button class="btn-move" onclick="movePage('blog','down')" title="下移">&#9660;</button>
+          </div>
+          <label class="page-toggle">
+            <input type="checkbox" onchange="togglePageVisibility('blog', this.checked)">
+            <div class="toggle-track"></div>
+            <div class="toggle-knob"></div>
+          </label>
+        </div>
+        <div class="page-item" data-page="admin">
+          <span class="drag-handle">&#9776;</span>
+          <div class="page-info">
+            <div class="page-name">管理后台</div>
+            <div class="page-path">/admin</div>
+          </div>
+          <span class="page-status live">上线</span>
+          <div class="page-actions">
+            <button class="btn-move" onclick="movePage('admin','up')" title="上移">&#9650;</button>
+            <button class="btn-move" onclick="movePage('admin','down')" title="下移">&#9660;</button>
+          </div>
+          <label class="page-toggle">
+            <input type="checkbox" checked onchange="togglePageVisibility('admin', this.checked)">
+            <div class="toggle-track"></div>
+            <div class="toggle-knob"></div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Content Modal -->
+  <div class="modal-overlay" id="contentModal">
+    <div class="modal">
+      <h3 id="modalTitle">新建内容</h3>
+      <div class="input-group">
+        <label>标题</label>
+        <input type="text" id="modal-content-title" placeholder="请输入标题" />
+      </div>
+      <div class="input-group">
+        <label>分类</label>
+        <select id="modal-content-category">
+          <option value="博客">博客</option>
+          <option value="产品">产品</option>
+          <option value="教程">教程</option>
+          <option value="随笔">随笔</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>摘要</label>
+        <textarea id="modal-content-excerpt" placeholder="请输入内容摘要"></textarea>
+      </div>
+      <div class="input-group">
+        <label>状态</label>
+        <select id="modal-content-status">
+          <option value="published">已发布</option>
+          <option value="draft">草稿</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeContentModal()">取消</button>
+        <button class="btn-save" onclick="saveContent()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <span>&#10003;</span>
+    <span id="toastMsg">配置已保存</span>
+  </div>
+
+  <!-- Config data from Astro -->
+  <div id="admin-config"
+    data-meta-title={config.meta.title}
+    data-meta-tagline={config.meta.tagline}
+    data-meta-description={config.meta.description}
+    data-meta-url={config.meta.url}
+    hidden
+  />
+
+  <script is:inline>
+    // Initialize toggle states from server config
+    document.getElementById('blogToggle').checked =
+      document.getElementById('blogToggle').dataset.initial === 'true';
+    document.getElementById('toolsToggle').checked =
+      document.getElementById('toolsToggle').dataset.initial === 'true';
+    document.getElementById('aboutToggle').checked =
+      document.getElementById('aboutToggle').dataset.initial === 'true';
+
+    // Initialize status badge class
+    const badge = document.getElementById('statusBadge');
+    badge.classList.add(badge.dataset.initialClass);
+
+    // Read meta config from data attributes
+    const configEl = document.getElementById('admin-config');
+    const metaConfig = {
+      title: configEl.dataset.metaTitle,
+      tagline: configEl.dataset.metaTagline,
+      description: configEl.dataset.metaDescription,
+      url: configEl.dataset.metaUrl,
+    };
+
+    // Default values for reset
+    const defaults = {
+      blog: configEl.dataset.metaTitle ? false : false, // blog defaults to false
+      tools: true,
+    };
+
+    // Update status badge based on blog toggle
+    function updateStatus() {
+      const blogOn = document.getElementById('blogToggle').checked;
+      const badge = document.getElementById('statusBadge');
+      const text = document.getElementById('statusText');
+      if (blogOn) {
+        badge.className = 'status-badge on';
+        text.textContent = '博客模块已开启 — 前台可见';
+      } else {
+        badge.className = 'status-badge off';
+        text.textContent = '博客模块已关闭 — 前台不显示';
+      }
+    }
+
+    // Listen to blog toggle changes
+    document.getElementById('blogToggle').addEventListener('change', updateStatus);
+
+    // Generate config text
+    function getConfigText() {
+      const blog = document.getElementById('blogToggle').checked;
+      const tools = document.getElementById('toolsToggle').checked;
+      const about = document.getElementById('aboutToggle').checked;
+      const wechat = document.getElementById('input-wechat').value;
+      const email = document.getElementById('input-email').value;
+      const douyin = document.getElementById('input-douyin').value;
+
+      return '// ============================================================\n' +
+        '// Senmoo 站点配置\n' +
+        '// 控制各模块的显隐和功能开关\n' +
+        '// 修改后重新构建即可生效\n' +
+        '// ============================================================\n\n' +
+        'export const SITE_CONFIG = {\n' +
+        '  // --- 模块显隐 ---\n' +
+        '  modules: {\n' +
+        '    blog: ' + blog + ',          // 博客模块（暂未开放）\n' +
+        '    decisionLens: ' + tools + ',  // 决策透镜入口\n' +
+        '    about: ' + about + ',           // 关于我模块\n' +
+        '  },\n\n' +
+        '  // --- 社交链接 ---\n' +
+        '  social: {\n' +
+        "    douyin: '" + douyin + "',\n" +
+        "    email: '" + email + "',\n" +
+        "    wechat: '" + wechat + "',\n" +
+        '  },\n\n' +
+        '  // --- 站点元数据 ---\n' +
+        '  meta: {\n' +
+        "    title: '" + metaConfig.title + "',\n" +
+        "    tagline: '" + metaConfig.tagline + "',\n" +
+        "    description: '" + metaConfig.description + "',\n" +
+        "    url: '" + metaConfig.url + "',\n" +
+        '  },\n' +
+        '} as const;\n';
+    }
+
+    // Save config (generate + show output)
+    function saveConfig() {
+      const output = document.getElementById('configOutput');
+      const code = document.getElementById('configCode');
+      code.textContent = getConfigText();
+      output.classList.add('show');
+      showToast('配置已生成，请复制并替换源文件');
+    }
+
+    // Reset to initial values
+    function resetConfig() {
+      document.getElementById('blogToggle').checked = false;
+      document.getElementById('toolsToggle').checked = true;
+      document.getElementById('aboutToggle').checked = true;
+      updateStatus();
+      showToast('已重置为默认配置');
+    }
+
+    // Copy config to clipboard
+    async function copyConfig() {
+      const text = getConfigText();
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast('配置代码已复制到剪贴板');
+      } catch {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showToast('配置代码已复制到剪贴板');
+      }
+    }
+
+    // Toast notification
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    // ===== Sidebar Navigation =====
+    function switchSection(name) {
+      document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+      document.getElementById('section-' + name).classList.add('active');
+      document.querySelector('[data-section="' + name + '"]').classList.add('active');
+    }
+
+    // ===== Content Management =====
+    let contentData = [];
+    let editingId = null;
+
+    function renderContentTable(data) {
+      const tbody = document.getElementById('contentTableBody');
+      if (!data) data = contentData;
+      tbody.innerHTML = data.map(item =>
+        '<tr>' +
+          '<td><div class="content-title-cell"><span class="title">' + item.title + '</span><span class="cat">' + item.category + '</span></div></td>' +
+          '<td><span class="status-badge-sm ' + item.status + '">' + (item.status === 'published' ? '已发布' : '草稿') + '</span></td>' +
+          '<td style="color:#6b7280;font-size:0.85rem;">' + item.date + '</td>' +
+          '<td><div class="action-btns">' +
+            '<button class="btn-edit" onclick="editContent(' + item.id + ')">编辑</button>' +
+            '<button class="btn-del" onclick="deleteContent(' + item.id + ')">删除</button>' +
+          '</div></td>' +
+        '</tr>'
+      ).join('');
+    }
+
+    function filterContent() {
+      const q = document.getElementById('contentSearch').value.toLowerCase();
+      const filtered = contentData.filter(item =>
+        item.title.toLowerCase().includes(q) || item.category.toLowerCase().includes(q)
+      );
+      renderContentTable(filtered);
+    }
+
+    function openContentModal(id) {
+      editingId = id || null;
+      document.getElementById('modalTitle').textContent = id ? '编辑内容' : '新建内容';
+      if (id) {
+        const item = contentData.find(c => c.id === id);
+        document.getElementById('modal-content-title').value = item.title;
+        document.getElementById('modal-content-category').value = item.category;
+        document.getElementById('modal-content-excerpt').value = item.excerpt;
+        document.getElementById('modal-content-status').value = item.status;
+      } else {
+        document.getElementById('modal-content-title').value = '';
+        document.getElementById('modal-content-category').value = '博客';
+        document.getElementById('modal-content-excerpt').value = '';
+        document.getElementById('modal-content-status').value = 'draft';
+      }
+      document.getElementById('contentModal').classList.add('show');
+    }
+
+    function closeContentModal() {
+      document.getElementById('contentModal').classList.remove('show');
+      editingId = null;
+    }
+
+    function saveContent() {
+      const title = document.getElementById('modal-content-title').value.trim();
+      if (!title) { showToast('请输入标题'); return; }
+      const category = document.getElementById('modal-content-category').value;
+      const excerpt = document.getElementById('modal-content-excerpt').value.trim();
+      const status = document.getElementById('modal-content-status').value;
+      const today = new Date().toISOString().slice(0, 10);
+
+      if (editingId) {
+        const item = contentData.find(c => c.id === editingId);
+        item.title = title; item.category = category;
+        item.excerpt = excerpt; item.status = status;
+        showToast('内容已更新');
+      } else {
+        const newId = Math.max(...contentData.map(c => c.id)) + 1;
+        contentData.unshift({ id: newId, title, category, status, date: today, excerpt });
+        showToast('内容已创建');
+      }
+      renderContentTable();
+      closeContentModal();
+    }
+
+    function editContent(id) { openContentModal(id); }
+
+    function deleteContent(id) {
+      contentData = contentData.filter(c => c.id !== id);
+      renderContentTable();
+      showToast('内容已删除');
+    }
+
+    // ===== Data Statistics Chart =====
+    function initChart() {
+      const container = document.getElementById('chartBars');
+      if (!container) return;
+      container.innerHTML = '<div style="width:100%;text-align:center;color:#6b7280;font-size:0.85rem;padding:40px 0;">暂无数据</div>';
+    }
+
+    // ===== Page Management =====
+    function togglePageVisibility(page, visible) {
+      const item = document.querySelector('[data-page="' + page + '"]');
+      const badge = item.querySelector('.page-status');
+      if (visible) {
+        badge.textContent = '上线';
+        badge.className = 'page-status live';
+      } else {
+        badge.textContent = '隐藏';
+        badge.className = 'page-status hidden';
+      }
+      showToast(visible ? '页面已上线' : '页面已隐藏');
+    }
+
+    function movePage(page, direction) {
+      const item = document.querySelector('[data-page="' + page + '"]');
+      if (direction === 'up' && item.previousElementSibling) {
+        item.parentNode.insertBefore(item, item.previousElementSibling);
+      } else if (direction === 'down' && item.nextElementSibling) {
+        item.parentNode.insertBefore(item.nextElementSibling, item);
+      }
+    }
+
+    // ===== Init on load =====
+    renderContentTable();
+    initChart();
+
+    // Close modal on overlay click
+    document.getElementById('contentModal').addEventListener('click', function(e) {
+      if (e.target === this) closeContentModal();
+    });
+  </script>
+</body>
+</html>

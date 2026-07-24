@@ -1,0 +1,79 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="AI产品 - Senmoo">
+  <div class="tools-hero">
+    <div class="section-label reveal">AI Products</div>
+    <h1 class="section-title reveal">AI产品</h1>
+    <p class="section-desc reveal" style="margin-left:auto;margin-right:auto;">
+      用AI解决真实问题。每一个产品都从一个具体的痛点出发。
+    </p>
+  </div>
+
+  <div class="tools-grid" style="max-width:480px; margin:0 auto;">
+    <a href="/tools/decision-lens/index.html" class="tool-card reveal">
+      <div class="tool-arrow">&nearr;</div>
+      <div class="tool-icon">&#9878;</div>
+      <h3>决策透镜 Decision Lens</h3>
+      <p class="tool-desc">
+        面对选择不知道怎么分析？决策透镜帮你把模糊的纠结变成清晰的可视化对比。
+        支持单项决策、多方案对比、优先级排序三种模式。
+      </p>
+      <span class="tool-status live">&#9679; 已上线</span>
+    </a>
+  </div>
+
+  <!-- Decision Lens Preview Window -->
+  <div class="dl-preview">
+    <div class="section-label reveal">Featured AI Product</div>
+    <h2 class="section-title reveal" style="margin-bottom: 32px;">决策透镜 · 预览</h2>
+    <div class="dl-window reveal">
+      <div class="dl-titlebar">
+        <div class="dl-dots"><span></span><span></span><span></span></div>
+        <div class="dl-url">senmoo.ai/tools/decision-lens</div>
+      </div>
+      <div class="dl-content">
+        <div class="dl-mock">
+          <div class="dl-logo">&#9878;</div>
+          <h3>Decision Lens / 决策透镜</h3>
+          <p>将纠结变成清晰，让每个选择都有据可依</p>
+          <div class="dl-features">
+            <div class="dl-feat">&#9878; 天平流 · 单项决策</div>
+            <div class="dl-feat">&#9638; 矩阵流 · 多方案对比</div>
+            <div class="dl-feat">&#9670; 象限流 · 优先级排序</div>
+          </div>
+          <br>
+          <a href="/tools/decision-lens/index.html" class="btn btn-primary">打开决策透镜 &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- How to Use Steps -->
+  <section class="section">
+    <div class="section-label reveal">How It Works</div>
+    <h2 class="section-title reveal">怎么用决策透镜</h2>
+    <p class="section-desc reveal">三步，把纠结变成清晰。</p>
+    <div class="steps-grid">
+      <div class="step-card reveal">
+        <div class="step-num">01</div>
+        <h3>选择模式</h3>
+        <p>天平流适合单项决策，矩阵流适合多方案对比，象限流适合优先级排序。根据你的场景选一个。</p>
+      </div>
+      <div class="step-card reveal">
+        <div class="step-num">02</div>
+        <h3>输入选项</h3>
+        <p>写下你纠结的选项和考量维度。不用完美，想到什么写什么，工具会帮你结构化。</p>
+      </div>
+      <div class="step-card reveal">
+        <div class="step-num">03</div>
+        <h3>看清结果</h3>
+        <p>可视化对比一目了然。数据不会替你决定，但会让你的选择更有底气。</p>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:48px;" class="reveal">
+      <a href="/tools/decision-lens/index.html" class="btn btn-primary">打开决策透镜 <span>&rarr;</span></a>
+    </div>
+  </section>
+</Layout>

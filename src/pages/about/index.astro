@@ -1,0 +1,94 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { SITE_CONFIG } from '../../config';
+const { social } = SITE_CONFIG;
+---
+
+<Layout title="关于我 - Senmoo">
+  <div class="about-hero">
+    <div class="about-avatar reveal">
+      <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;border-radius:50%;">
+        <defs>
+          <linearGradient id="avatarBg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#7C3AED"/>
+            <stop offset="50%" stop-color="#EC4899"/>
+            <stop offset="100%" stop-color="#F97316"/>
+          </linearGradient>
+          <clipPath id="ac"><circle cx="200" cy="200" r="200"/></clipPath>
+        </defs>
+        <g clip-path="url(#ac)">
+          <rect width="400" height="400" fill="url(#avatarBg)"/>
+          <circle cx="100" cy="90" r="50" fill="rgba(255,255,255,0.06)"/>
+          <circle cx="320" cy="310" r="70" fill="rgba(255,255,255,0.05)"/>
+          <circle cx="310" cy="80" r="30" fill="rgba(255,255,255,0.04)"/>
+          <text x="200" y="195" text-anchor="middle" dominant-baseline="central" font-family="Georgia,'Times New Roman',serif" font-size="160" font-weight="700" fill="rgba(255,255,255,0.95)" letter-spacing="-4">S</text>
+          <text x="200" y="290" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',sans-serif" font-size="36" font-weight="300" fill="rgba(255,255,255,0.85)" letter-spacing="8">Senmoo</text>
+        </g>
+      </svg>
+    </div>
+    <div class="about-text">
+      <div class="section-label reveal">About Me</div>
+      <h1 class="reveal">我是<span class="gradient-text">钟森木</span></h1>
+      <p class="bio reveal">
+        互联网行业摸爬滚打多年。到了四十岁，忽然意识到打工已不再是人生的第一选择。
+        高强度的节奏让身心俱疲，反复思虑之后，毅然离开了那份安稳的工作。
+      </p>
+      <p class="bio reveal">
+        恰好赶上 AI 浪潮兴起，深入研究后坚信——AI 是普通人实现自我价值的利器。
+        于是以身入局，顺势而为，在时代的洪流中寻找属于自己的那一小撮流沙。
+      </p>
+      <p class="bio reveal">
+        这个网站是我的数字实验室：记录思考、打磨产品、连接有趣的灵魂。
+      </p>
+    </div>
+  </div>
+
+  <!-- Contact Section -->
+  <div class="section" style="padding: 60px 48px 40px; text-align:center;">
+    <div class="section-label reveal">Contact</div>
+    <h2 class="section-title reveal">联系我</h2>
+    <p class="section-desc reveal" style="margin-left:auto;margin-right:auto;">欢迎交流 AI 产品、内容创作，或任何有趣的想法。</p>
+    <div style="display:flex; gap:40px; justify-content:center; align-items:flex-start; margin-top:40px; flex-wrap:wrap;">
+      <div class="reveal" style="text-align:center;">
+        <div style="width:160px; height:160px; background:var(--bg-card); border-radius:var(--radius); display:flex; flex-direction:column; align-items:center; justify-content:center; margin:0 auto 12px; border:1px solid var(--border);">
+          <div style="font-size:2.5rem; margin-bottom:4px;">&#128247;</div>
+          <div style="color:var(--text-muted); font-size:0.7rem;">微信二维码</div>
+          <div style="color:var(--text-muted); font-size:0.65rem;">(上线时替换)</div>
+        </div>
+        <div style="color:var(--text-secondary); font-size:0.85rem;">
+          微信：<span class="wx-id" id="wxId">{social.wechat}</span>
+          <button class="copy-btn" data-copy="{social.wechat}" onclick="copyWx(this)">复制</button>
+        </div>
+      </div>
+      <div class="reveal" style="text-align:center;">
+        <div style="width:160px; height:160px; background:var(--bg-card); border-radius:var(--radius); display:flex; flex-direction:column; align-items:center; justify-content:center; margin:0 auto 12px; border:1px solid var(--border);">
+          <div style="font-size:2.5rem; margin-bottom:8px;">&#9993;</div>
+          <div style="color:var(--text-secondary); font-size:0.8rem;">{social.email}</div>
+        </div>
+        <div style="color:var(--text-secondary); font-size:0.85rem;">邮箱</div>
+      </div>
+      <div class="reveal" style="text-align:center;">
+        <div style="width:160px; height:160px; background:var(--bg-card); border-radius:var(--radius); display:flex; flex-direction:column; align-items:center; justify-content:center; margin:0 auto 12px; border:1px solid var(--border);">
+          <div style="font-size:2.5rem; margin-bottom:8px;">&#127925;</div>
+          <div style="color:var(--text-secondary); font-size:0.8rem;">抖音 @Senmoo</div>
+        </div>
+        <div style="color:var(--text-secondary); font-size:0.85rem;">抖音</div>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline>
+    function copyWx(btn) {
+      var text = btn.getAttribute('data-copy') || '';
+      var done = function() {
+        var orig = btn.textContent;
+        btn.textContent = '已复制';
+        btn.classList.add('copied');
+        setTimeout(function() { btn.textContent = orig; btn.classList.remove('copied'); }, 1500);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, done);
+      } else { done(); }
+    }
+  </script>
+</Layout>

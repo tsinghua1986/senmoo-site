@@ -1,0 +1,33 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.jsx';
+import Footer from '../components/Footer.jsx';
+import ScrollReveal from '../components/ScrollReveal.jsx';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = '专注打造属于普通人自己的AI产品实验室' } = Astro.props;
+const currentPath = Astro.url.pathname;
+---
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={description} />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <title>{title}</title>
+</head>
+<body>
+  <Nav client:load currentPath={currentPath} />
+  <main>
+    <slot />
+  </main>
+  <Footer />
+  <ScrollReveal client:load />
+</body>
+</html>
