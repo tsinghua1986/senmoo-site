@@ -7,9 +7,23 @@ const DEEPSEEK_ENDPOINT = 'https://api.deepseek.com/v1/chat/completions';
 
 export default {
   async fetch(request, env, ctx) {
+    const corsHeaders = {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, x-dl-target, Authorization',
+    };
+
+    // Handle preflight (OPTIONS) requests first
+    if (request.method === 'OPTIONS') {
+      return new Response(null, {
+        status: 204,
+        headers: corsHeaders,
+      });
+    }
+
     // Only allow POST requests
     if (request.method !== 'POST') {
-      return new Response('Method not allowed', { status: 405 });
+      return new Response('Method not allowed', { status: 405, headers: corsHeaders });
     }
 
     // Get API key from environment variable (set via Wrangler secret)
@@ -19,12 +33,9 @@ export default {
     }
 
     // Determine target URL
-    // If x-dl-target header is present, use it with the request path
-    // Otherwise, default to DeepSeek API
     const targetHeader = request.headers.get('x-dl-target');
     let targetUrl;
     if (targetHeader) {
-      // Extract path from request URL (strip /dl-proxy prefix)
       const url = new URL(request.url);
       const path = url.pathname.replace(/^\/dl-proxy/, '') || '/';
       targetUrl = `${targetHeader.replace(/\/+$/, '')}${path}`;
@@ -45,22 +56,7 @@ export default {
       body: body,
     });
 
-    // Return the response with CORS headers
-    const corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, x-dl-target, Authorization',
-    };
-
-    // Handle preflight requests
-    if (request.method === 'OPTIONS') {
-      return new Response(null, {
-        status: 204,
-        headers: corsHeaders,
-      });
-    }
-
-    // Forward the actual response
+    // Forward the response with CORS headers
     const responseData = await response.text();
     return new Response(responseData, {
       status: response.status,
