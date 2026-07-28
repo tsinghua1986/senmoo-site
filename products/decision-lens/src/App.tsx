@@ -84,12 +84,12 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6]">
+    <div className="min-h-screen bg-[#FAFAF7]">
       {/* Header */}
       <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-100 print:hidden">
         <div className="max-w-5xl mx-auto px-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#0F766E] to-[#1E3A8A] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#C67C5B] to-[#D4A574] flex items-center justify-center">
               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -127,8 +127,8 @@ function AppContent() {
               className="bg-white rounded-2xl shadow-2xl p-6 max-w-sm mx-4 w-full"
             >
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-teal-50 flex items-center justify-center">
-                  <svg className="w-5 h-5 text-[#0F766E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center">
+                  <svg className="w-5 h-5 text-[#C67C5B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
@@ -146,7 +146,7 @@ function AppContent() {
                 </button>
                 <button
                   onClick={handleRestore}
-                  className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium text-white bg-[#0F766E] hover:bg-[#0D6B63] transition-colors"
+                  className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium text-white bg-[#C67C5B] hover:bg-[#B06D50] transition-colors"
                 >
                   继续决策
                 </button>

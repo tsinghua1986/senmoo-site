@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from 'recharts';
 import { useDecision } from '../../store/DecisionContext';
 
-const COLORS = ['#0F766E', '#1E3A8A', '#D97706', '#DC2626', '#7C3AED'];
+const COLORS = ['#C67C5B', '#B89770', '#D97706', '#DC2626', '#7C3AED'];
 
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
@@ -186,8 +186,8 @@ export default function WadmMatrix() {
                           onClick={() => setActiveScorer(isActive ? null : { optionId: opt.id, criterionId: crit.id })}
                           className={`
                             w-10 h-10 rounded-lg text-sm font-semibold transition-all
-                            ${score >= 8 ? 'bg-teal-100 text-teal-700' : score >= 5 ? 'bg-amber-50 text-amber-700' : 'bg-red-50 text-red-600'}
-                            ${isActive ? 'ring-2 ring-teal-400 scale-110' : 'hover:scale-105'}
+                            ${score >= 8 ? 'bg-orange-100 text-orange-700' : score >= 5 ? 'bg-amber-50 text-amber-700' : 'bg-red-50 text-red-600'}
+                            ${isActive ? 'ring-2 ring-orange-400 scale-110' : 'hover:scale-105'}
                           `}
                         >
                           {score}
@@ -211,7 +211,7 @@ export default function WadmMatrix() {
                               style={{ '--value-percent': `${(score - 1) / 9 * 100}%` } as React.CSSProperties}
                               className="w-full"
                             />
-                            <div className="text-center text-lg font-bold text-[#0F766E] mt-1">{score}</div>
+                            <div className="text-center text-lg font-bold text-[#C67C5B] mt-1">{score}</div>
                           </motion.div>
                         )}
                       </td>
@@ -226,7 +226,7 @@ export default function WadmMatrix() {
               <td className="p-2 text-gray-700">加权总分</td>
               {totals.map(t => (
                 <td key={t.optionId} className="p-2 text-center">
-                  <span className={`text-lg ${t.optionId === winnerId ? 'text-[#0F766E]' : 'text-gray-500'}`}>
+                  <span className={`text-lg ${t.optionId === winnerId ? 'text-[#C67C5B]' : 'text-gray-500'}`}>
                     {t.total.toFixed(1)}
                   </span>
                 </td>
@@ -304,10 +304,10 @@ export default function WadmMatrix() {
                 style={{ '--value-percent': `${(activeScore - 1) / 9 * 100}%` } as React.CSSProperties}
                 className="w-full"
               />
-              <div className="text-center text-3xl font-bold text-[#0F766E] mt-3">{activeScore}</div>
+              <div className="text-center text-3xl font-bold text-[#C67C5B] mt-3">{activeScore}</div>
               <button
                 onClick={() => setActiveScorer(null)}
-                className="w-full mt-4 py-2.5 rounded-xl bg-[#0F766E] text-white text-sm font-medium"
+                className="w-full mt-4 py-2.5 rounded-xl bg-[#C67C5B] text-white text-sm font-medium"
               >
                 确认
               </button>

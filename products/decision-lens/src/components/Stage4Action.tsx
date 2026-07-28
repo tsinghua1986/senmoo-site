@@ -148,7 +148,7 @@ export default function Stage4Action() {
       {/* Loading */}
       {loading && (
         <div className="flex flex-col items-center justify-center py-16 gap-6">
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-teal-400 to-blue-500 animate-breathe flex items-center justify-center">
+          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 animate-breathe flex items-center justify-center">
             <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
@@ -170,7 +170,7 @@ export default function Stage4Action() {
         <div ref={cardRef} className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 print:shadow-none print:border-0">
           {/* Header */}
           <div className="text-center mb-6 pb-6 border-b border-gray-100">
-            <h2 className="text-2xl font-bold text-[#1E3A8A] mb-2">
+            <h2 className="text-2xl font-bold text-[#B89770] mb-2">
               「决策透镜」诊断单
             </h2>
             <p className="text-sm text-gray-400">
@@ -185,8 +185,8 @@ export default function Stage4Action() {
           </div>
 
           {/* Recommendation */}
-          <div className="mb-6 bg-teal-50 rounded-xl p-5 border border-teal-100">
-            <h3 className="text-xs font-semibold text-[#0F766E] uppercase tracking-wider mb-2">建议方向</h3>
+          <div className="mb-6 bg-orange-50 rounded-xl p-5 border border-orange-100">
+            <h3 className="text-xs font-semibold text-[#C67C5B] uppercase tracking-wider mb-2">建议方向</h3>
             <p className="text-base text-gray-800 leading-relaxed">{actionPlan.recommendation}</p>
           </div>
 
@@ -233,8 +233,8 @@ export default function Stage4Action() {
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3 pt-2 border-t border-indigo-100">
-                  <div className="bg-teal-50/70 rounded-lg p-2.5">
-                    <div className="text-xs text-teal-700 font-semibold mb-1">✅ 若达到</div>
+                  <div className="bg-orange-50/70 rounded-lg p-2.5">
+                    <div className="text-xs text-orange-700 font-semibold mb-1">✅ 若达到</div>
                     <div className="text-xs text-gray-700">{actionPlan.verificationRule.successAction}</div>
                   </div>
                   <div className="bg-red-50/70 rounded-lg p-2.5">
@@ -256,7 +256,8 @@ export default function Stage4Action() {
 
           {/* Footer */}
           <div className="text-center pt-4 border-t border-gray-100">
-            <p className="text-xs text-gray-300">由「决策透镜」Decision Lens 生成</p>
+            <p className="text-xs text-gray-300">AI生成内容仅作为参考使用，请谨慎决策</p>
+            <p className="text-xs text-gray-300 mt-1">由Senmoo「决策透镜」生成</p>
           </div>
         </div>
       )}
@@ -271,13 +272,13 @@ export default function Stage4Action() {
         >
           <button
             onClick={handleExportPoster}
-            className="px-5 py-2.5 rounded-xl bg-[#0F766E] text-white text-sm font-medium hover:bg-[#0D6B63] transition-colors"
+            className="px-5 py-2.5 rounded-xl bg-[#C67C5B] text-white text-sm font-medium hover:bg-[#B06D50] transition-colors"
           >
             下载海报 PNG
           </button>
           <button
             onClick={handleExportPDF}
-            className="px-5 py-2.5 rounded-xl border border-[#0F766E] text-[#0F766E] text-sm font-medium hover:bg-teal-50 transition-colors"
+            className="px-5 py-2.5 rounded-xl border border-[#C67C5B] text-[#C67C5B] text-sm font-medium hover:bg-orange-50 transition-colors"
           >
             导出 PDF
           </button>

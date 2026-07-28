@@ -71,7 +71,7 @@ function SliderRow({
               onChange={e => setEditText(e.target.value)}
               onBlur={commitEdit}
               onKeyDown={handleKeyDown}
-              className="w-full text-sm border border-teal-300 rounded px-1.5 py-0.5 outline-none focus:ring-1 focus:ring-teal-400"
+              className="w-full text-sm border border-orange-300 rounded px-1.5 py-0.5 outline-none focus:ring-1 focus:ring-orange-400"
             />
           ) : (
             <span
@@ -224,12 +224,12 @@ export default function FranklinScale() {
       <div className="flex justify-center">
         <svg width="200" height="120" viewBox="0 0 200 120">
           {/* Base */}
-          <polygon points="100,110 85,120 115,120" fill="#0F766E" />
-          <line x1="100" y1="30" x2="100" y2="110" stroke="#0F766E" strokeWidth="3" />
+          <polygon points="100,110 85,120 115,120" fill="#C67C5B" />
+          <line x1="100" y1="30" x2="100" y2="110" stroke="#C67C5B" strokeWidth="3" />
           {/* Beam */}
           <motion.line
             x1="20" y1="30" x2="180" y2="30"
-            stroke="#1E3A8A" strokeWidth="3" strokeLinecap="round"
+            stroke="#B89770" strokeWidth="3" strokeLinecap="round"
             animate={{
               x1: 20 + Math.sin(tilt * Math.PI / 180) * 80 * (tilt > 0 ? -0.3 : 0.3),
               y1: 30 + Math.sin(Math.abs(tilt) * Math.PI / 180) * (tilt > 0 ? 15 : -15),
@@ -239,14 +239,14 @@ export default function FranklinScale() {
             transition={{ type: 'spring', stiffness: 100 }}
           />
           {/* Labels */}
-          <text x="30" y="20" fontSize="11" fill="#0F766E" fontWeight="600">赞成</text>
+          <text x="30" y="20" fontSize="11" fill="#C67C5B" fontWeight="600">赞成</text>
           <text x="150" y="20" fontSize="11" fill="#DC2626" fontWeight="600">反对</text>
         </svg>
       </div>
 
       {/* Score Summary */}
       <div className="flex justify-center gap-8 text-sm">
-        <span className="text-teal-600 font-semibold">赞成总分: {totalPros.toFixed(1)}</span>
+        <span className="text-orange-600 font-semibold">赞成总分: {totalPros.toFixed(1)}</span>
         <span className="text-red-500 font-semibold">反对总分: {totalCons.toFixed(1)}</span>
       </div>
       <p className="text-center text-xs text-gray-400">拖动滑块调整重要程度（1=不重要，10=关键因素）· 双击文字可编辑</p>
@@ -264,8 +264,8 @@ export default function FranklinScale() {
       {/* Two Columns */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Pros */}
-        <div className="bg-teal-50/50 rounded-xl p-4 border border-teal-100">
-          <h4 className="text-sm font-semibold text-[#0F766E] mb-3">赞成去做 (Pros)</h4>
+        <div className="bg-orange-50/50 rounded-xl p-4 border border-orange-100">
+          <h4 className="text-sm font-semibold text-[#C67C5B] mb-3">赞成去做 (Pros)</h4>
           <div className="space-y-1">
             {franklin.pros.filter(p => !hideCancelled || !cancelledProIds.has(p.id)).map(item => (
               <SliderRow
@@ -290,7 +290,7 @@ export default function FranklinScale() {
                 }
               }}
               placeholder="添加一条赞成的理由…"
-              className="flex-1 text-sm border border-teal-200 rounded-lg px-3 py-1.5 outline-none focus:ring-1 focus:ring-teal-400 bg-white"
+              className="flex-1 text-sm border border-orange-200 rounded-lg px-3 py-1.5 outline-none focus:ring-1 focus:ring-orange-400 bg-white"
             />
             <button
               onClick={() => {
@@ -299,7 +299,7 @@ export default function FranklinScale() {
                   setNewProText('');
                 }
               }}
-              className="px-3 py-1.5 text-sm rounded-lg bg-teal-600 text-white hover:bg-teal-700 transition-colors disabled:opacity-40"
+              className="px-3 py-1.5 text-sm rounded-lg bg-orange-600 text-white hover:bg-orange-700 transition-colors disabled:opacity-40"
               disabled={!newProText.trim()}
             >
               +
@@ -363,7 +363,7 @@ export default function FranklinScale() {
         </div>
         <button
           onClick={handleCancelOut}
-          className="px-6 py-2.5 rounded-xl border-2 border-dashed border-teal-400 text-[#0F766E] text-sm font-medium hover:bg-teal-50 transition-colors animate-pulse"
+          className="px-6 py-2.5 rounded-xl border-2 border-dashed border-orange-400 text-[#C67C5B] text-sm font-medium hover:bg-orange-50 transition-colors animate-pulse"
         >
           两两相消
         </button>

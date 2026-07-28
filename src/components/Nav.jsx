@@ -25,17 +25,19 @@ export default function Nav({ currentPath = '/' }) {
 
   return (
     <nav className={`nav${scrolled ? ' scrolled' : ''}`}>
-      <a href="/" className="nav-logo">Senmoo</a>
-      <div className="nav-links">
-        {navLinks.map((link) => (
-          <a
-            key={link.href}
-            href={link.href}
-            className={`nav-link${isActive(link.href) ? ' active' : ''}`}
-          >
-            {link.label}
-          </a>
-        ))}
+      <div className="nav-left">
+        <a href="/" className="nav-logo">Senmoo</a>
+        <div className="nav-links">
+          {navLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className={`nav-link${isActive(link.href) ? ' active' : ''}`}
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
       </div>
     </nav>
   );

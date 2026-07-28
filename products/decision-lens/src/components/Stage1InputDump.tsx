@@ -155,16 +155,16 @@ export default function Stage1InputDump() {
       >
         <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
           <div className="text-center mb-6">
-            <div className="w-12 h-12 rounded-full bg-teal-50 flex items-center justify-center mx-auto mb-3">
-              <svg className="w-6 h-6 text-[#0F766E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-12 h-12 rounded-full bg-orange-50 flex items-center justify-center mx-auto mb-3">
+              <svg className="w-6 h-6 text-[#C67C5B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-[#1E3A8A]">我理解了你的问题</h2>
+            <h2 className="text-xl font-bold text-[#B89770]">我理解了你的问题</h2>
           </div>
 
-          <div className="mb-6 bg-teal-50 rounded-xl p-5 border border-teal-100">
-            <p className="text-xs font-semibold text-[#0F766E] uppercase tracking-wider mb-2">你的真实问题</p>
+          <div className="mb-6 bg-orange-50 rounded-xl p-5 border border-orange-100">
+            <p className="text-xs font-semibold text-[#C67C5B] uppercase tracking-wider mb-2">你的真实问题</p>
             <p className="text-base text-gray-800 leading-relaxed">{state.realIssue}</p>
           </div>
 
@@ -184,7 +184,7 @@ export default function Stage1InputDump() {
 
           <button
             onClick={handleEnterStage2}
-            className="w-full py-3 rounded-2xl bg-[#0F766E] text-white font-semibold text-base hover:bg-[#0D6B63] transition-all shadow-lg shadow-teal-600/20"
+            className="w-full py-3 rounded-2xl bg-[#C67C5B] text-white font-semibold text-base hover:bg-[#B06D50] transition-all shadow-lg shadow-orange-600/20"
           >
             继续拆解 &rarr;
           </button>
@@ -202,7 +202,7 @@ export default function Stage1InputDump() {
     >
       {/* Title */}
       <div className="text-center mb-8">
-        <h1 className="text-3xl sm:text-4xl font-bold text-[#1E3A8A] mb-3">
+        <h1 className="text-3xl sm:text-4xl font-bold text-[#B89770] mb-3">
           决策透镜
         </h1>
         <p className="text-gray-500 text-sm sm:text-base">
@@ -217,7 +217,7 @@ export default function Stage1InputDump() {
           onChange={(e) => setText(e.target.value)}
           placeholder="我现在不知道该不该从这家呆了三年的外企辞职...老板是个蠢货，我每天都处于严重的精神内耗中，但我现在有房贷，又怕辞了找不到更好的，可是我真的很喜欢烘焙，很想开一家自己的面包店..."
           rows={8}
-          className="w-full rounded-2xl border border-gray-200 bg-white px-5 py-4 text-base leading-relaxed text-gray-800 placeholder:text-gray-300 resize-none focus:outline-none focus:ring-2 focus:ring-[#0F766E]/30 focus:border-[#0F766E] transition-all shadow-sm"
+          className="w-full rounded-2xl border border-gray-200 bg-white px-5 py-4 text-base leading-relaxed text-gray-800 placeholder:text-gray-300 resize-none focus:outline-none focus:ring-2 focus:ring-[#C67C5B]/30 focus:border-[#C67C5B] transition-all shadow-sm"
         />
         <div className="absolute bottom-3 right-3 text-xs text-gray-300">
           {text.length} 字
@@ -242,7 +242,7 @@ export default function Stage1InputDump() {
           <button
             key={tag.label}
             onClick={() => handleSceneInject(tag.prompt)}
-            className="px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-xs hover:bg-teal-50 hover:text-[#0F766E] transition-colors"
+            className="px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-xs hover:bg-orange-50 hover:text-[#C67C5B] transition-colors"
           >
             {tag.label}
           </button>
@@ -258,15 +258,15 @@ export default function Stage1InputDump() {
             exit={{ opacity: 0, height: 0 }}
             className="mb-6"
           >
-            <div className="bg-teal-50 border border-teal-200 rounded-xl p-5">
+            <div className="bg-orange-50 border border-orange-200 rounded-xl p-5">
               <div className="flex items-start gap-3 mb-4">
-                <div className="w-8 h-8 rounded-full bg-[#0F766E] flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-[#C67C5B] flex items-center justify-center flex-shrink-0">
                   <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-[#0F766E] mb-1">AI 分析师追问</p>
+                  <p className="text-xs font-semibold text-[#C67C5B] mb-1">AI 分析师追问</p>
                   <p className="text-sm text-gray-700 leading-relaxed">{followUp}</p>
                 </div>
               </div>
@@ -275,12 +275,12 @@ export default function Stage1InputDump() {
                 onChange={(e) => setFollowUpAnswer(e.target.value)}
                 placeholder="补充说明你的情况..."
                 rows={3}
-                className="w-full rounded-xl border border-teal-200 bg-white px-4 py-3 text-sm leading-relaxed text-gray-800 placeholder:text-gray-300 resize-none focus:outline-none focus:ring-2 focus:ring-[#0F766E]/30 focus:border-[#0F766E] transition-all"
+                className="w-full rounded-xl border border-orange-200 bg-white px-4 py-3 text-sm leading-relaxed text-gray-800 placeholder:text-gray-300 resize-none focus:outline-none focus:ring-2 focus:ring-[#C67C5B]/30 focus:border-[#C67C5B] transition-all"
               />
               <button
                 onClick={handleFollowUpSubmit}
                 disabled={!followUpAnswer.trim() || loading}
-                className="mt-3 w-full py-2.5 rounded-xl bg-[#0F766E] text-white text-sm font-medium hover:bg-[#0D6B63] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                className="mt-3 w-full py-2.5 rounded-xl bg-[#C67C5B] text-white text-sm font-medium hover:bg-[#B06D50] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
               >
                 {loading ? "分析中..." : "回答并继续"}
               </button>
@@ -305,7 +305,7 @@ export default function Stage1InputDump() {
         <button
           onClick={handleSubmit}
           disabled={!canSubmit || loading}
-          className="w-full py-4 rounded-2xl bg-[#0F766E] text-white font-semibold text-base hover:bg-[#0D6B63] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg shadow-teal-600/20 hover:shadow-teal-600/30"
+          className="w-full py-4 rounded-2xl bg-[#C67C5B] text-white font-semibold text-base hover:bg-[#B06D50] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg shadow-orange-600/20 hover:shadow-orange-600/30"
         >
           {loading ? (
             <span className="flex items-center justify-center gap-2">

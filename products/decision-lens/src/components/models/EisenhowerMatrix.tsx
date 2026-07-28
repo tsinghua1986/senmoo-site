@@ -25,7 +25,7 @@ const QUADRANT_TARGET: Record<Quadrant, { urgency: number; importance: number }>
 
 const QUADRANT_CONFIG: Record<Quadrant, { label: string; color: string; bg: string; border: string }> = {
   do: { label: '立即去做', color: 'text-red-700', bg: 'bg-red-50', border: 'border-red-200' },
-  schedule: { label: '安排日程', color: 'text-teal-700', bg: 'bg-teal-50', border: 'border-teal-200' },
+  schedule: { label: '安排日程', color: 'text-orange-700', bg: 'bg-orange-50', border: 'border-orange-200' },
   delegate: { label: '委托他人', color: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200' },
   drop: { label: '果断放弃', color: 'text-gray-500', bg: 'bg-gray-50', border: 'border-gray-200' },
 };

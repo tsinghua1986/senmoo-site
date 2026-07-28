@@ -21,7 +21,7 @@ export default function FlowB_Scoring() {
       className="max-w-5xl mx-auto px-4 py-6"
     >
       <div className="text-center mb-6">
-        <h2 className="text-xl font-bold text-[#1E3A8A]">加权决策矩阵</h2>
+        <h2 className="text-xl font-bold text-[#B89770]">加权决策矩阵</h2>
         <p className="text-sm text-gray-500 mt-1">
           为每个选项在每个维度上打分（1-10），并调整维度权重
         </p>
@@ -57,7 +57,7 @@ export default function FlowB_Scoring() {
       <div className="flex justify-center mt-8">
         <button
           onClick={handleProceed}
-          className="px-8 py-3 rounded-2xl bg-[#0F766E] text-white font-semibold hover:bg-[#0D6B63] transition-colors shadow-lg shadow-teal-600/20"
+          className="px-8 py-3 rounded-2xl bg-[#C67C5B] text-white font-semibold hover:bg-[#B06D50] transition-colors shadow-lg shadow-orange-600/20"
         >
           生成破冰行动
         </button>

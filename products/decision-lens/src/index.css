@@ -2,20 +2,20 @@
 
 /* ===== Design Tokens (CSS Variables) ===== */
 :root {
-  --bg-primary: #FAF9F6;
+  --bg-primary: #FAFAF7;
   --bg-card: #FFFFFF;
   --text-primary: #1A1A2E;
-  --text-secondary: #6B7280;
-  --brand-primary: #0F766E;
-  --brand-primary-light: #14B8A6;
-  --brand-navy: #1E3A8A;
+  --text-secondary: #5A5A6E;
+  --brand-primary: #C67C5B;
+  --brand-primary-light: #D4A574;
+  --brand-navy: #B89770;
   --hard-constraint: #FEE2E2;
   --hard-constraint-border: #FCA5A5;
   --soft-constraint: #DCFCE7;
   --soft-constraint-border: #86EFAC;
-  --border-color: #E5E7EB;
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.06);
-  --shadow-elevated: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --border-color: #E8E5E0;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-elevated: 0 12px 32px rgba(0, 0, 0, 0.06);
   --radius-card: 16px;
   --radius-pill: 9999px;
   --font-sans: 'Microsoft YaHei', 'PingFang SC', system-ui, sans-serif;

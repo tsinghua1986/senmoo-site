@@ -116,13 +116,13 @@ export default function FlowA_Factors() {
           className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100"
         >
           <div className="flex items-start gap-3 mb-4">
-            <div className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
-              <svg className="w-4 h-4 text-[#0F766E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
+              <svg className="w-4 h-4 text-[#C67C5B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-[#0F766E] mb-1">核心问题重构</h3>
+              <h3 className="text-sm font-semibold text-[#C67C5B] mb-1">核心问题重构</h3>
               <p className="text-gray-800 text-base leading-relaxed">{state.realIssue}</p>
             </div>
           </div>
@@ -154,8 +154,8 @@ export default function FlowA_Factors() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Pros */}
-          <div className="bg-teal-50/50 rounded-xl p-4 border border-teal-100">
-            <h4 className="text-sm font-semibold text-[#0F766E] mb-3">推动因素 (Pros)</h4>
+          <div className="bg-orange-50/50 rounded-xl p-4 border border-orange-100">
+            <h4 className="text-sm font-semibold text-[#C67C5B] mb-3">推动因素 (Pros)</h4>
             {renderGroup(hardPros, "pros", "\u{1F512} 硬约束（不可违背的客观限制）", "text-red-600")}
             {renderGroup(softPros, "pros", "\u{1F513} 软约束（可以挑战的主观判断）", "text-gray-500")}
             {pros.length === 0 && <p className="text-xs text-gray-400 text-center py-4">暂无推动因素</p>}
@@ -165,11 +165,11 @@ export default function FlowA_Factors() {
                 onChange={(e) => setNewPro(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter" && newPro.trim()) { addFactor("pros", newPro.trim()); setNewPro(""); } }}
                 placeholder="添加推动因素..."
-                className="flex-1 text-sm border border-teal-200 rounded-lg px-3 py-1.5 outline-none focus:ring-1 focus:ring-teal-400 bg-white"
+                className="flex-1 text-sm border border-orange-200 rounded-lg px-3 py-1.5 outline-none focus:ring-1 focus:ring-orange-400 bg-white"
               />
               <button
                 onClick={() => { if (newPro.trim()) { addFactor("pros", newPro.trim()); setNewPro(""); } }}
-                className="px-3 py-1.5 text-sm rounded-lg bg-teal-600 text-white hover:bg-teal-700 disabled:opacity-40"
+                className="px-3 py-1.5 text-sm rounded-lg bg-orange-600 text-white hover:bg-orange-700 disabled:opacity-40"
                 disabled={!newPro.trim()}
               >+</button>
             </div>
@@ -204,7 +204,7 @@ export default function FlowA_Factors() {
         <button
           onClick={handleConfirm}
           disabled={pros.length === 0 && cons.length === 0}
-          className="px-8 py-3 rounded-2xl bg-[#0F766E] text-white font-semibold hover:bg-[#0D6B63] disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-lg shadow-teal-600/20"
+          className="px-8 py-3 rounded-2xl bg-[#C67C5B] text-white font-semibold hover:bg-[#B06D50] disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-lg shadow-orange-600/20"
         >
           确认因素，进入加权相消
         </button>

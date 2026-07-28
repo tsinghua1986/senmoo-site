@@ -29,9 +29,9 @@ export default function StageIndicator() {
               className={`
                 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all
                 ${isCurrent
-                  ? 'bg-[#0F766E] text-white shadow-md'
+                  ? 'bg-[#C67C5B] text-white shadow-md'
                   : isCompleted
-                    ? 'bg-teal-100 text-[#0F766E] cursor-pointer hover:bg-teal-200'
+                    ? 'bg-orange-100 text-[#C67C5B] cursor-pointer hover:bg-orange-200'
                     : 'bg-gray-100 text-gray-400 cursor-default'
                 }
               `}
@@ -56,7 +56,7 @@ export default function StageIndicator() {
                   initial={{ width: '0%' }}
                   animate={{ width: isCompleted ? '100%' : '0%' }}
                   transition={{ duration: 0.4 }}
-                  style={{ backgroundColor: isCompleted ? '#0F766E' : '#E5E7EB' }}
+                  style={{ backgroundColor: isCompleted ? '#C67C5B' : '#E5E7EB' }}
                 />
               </div>
             )}

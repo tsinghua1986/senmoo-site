@@ -97,13 +97,13 @@ export default function FlowB_Options() {
           className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100"
         >
           <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
-              <svg className="w-4 h-4 text-[#0F766E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
+              <svg className="w-4 h-4 text-[#C67C5B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-[#0F766E] mb-1">核心问题重构</h3>
+              <h3 className="text-sm font-semibold text-[#C67C5B] mb-1">核心问题重构</h3>
               <p className="text-gray-800 text-base leading-relaxed">{state.realIssue}</p>
             </div>
           </div>
@@ -175,7 +175,7 @@ export default function FlowB_Options() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Options */}
           <div className="bg-blue-50/50 rounded-xl p-4 border border-blue-100">
-            <h4 className="text-sm font-semibold text-[#1E3A8A] mb-3">备选方案</h4>
+            <h4 className="text-sm font-semibold text-[#B89770] mb-3">备选方案</h4>
             <div className="space-y-2">
               {options.map((opt, i) => (
                 <div key={i} className="flex items-center gap-2 bg-white rounded-lg p-2.5 shadow-sm">
@@ -242,7 +242,7 @@ export default function FlowB_Options() {
         <button
           onClick={handleConfirm}
           disabled={options.length < 2 || criteria.length < 1}
-          className="px-8 py-3 rounded-2xl bg-[#0F766E] text-white font-semibold hover:bg-[#0D6B63] disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-lg shadow-teal-600/20"
+          className="px-8 py-3 rounded-2xl bg-[#C67C5B] text-white font-semibold hover:bg-[#B06D50] disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-lg shadow-orange-600/20"
         >
           确认选项，进入打分排名
         </button>

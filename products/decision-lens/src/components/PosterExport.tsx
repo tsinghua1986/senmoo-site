@@ -24,7 +24,7 @@ const PosterExport = forwardRef<HTMLDivElement>(function PosterExport(_, ref) {
       {/* Brand Header */}
       <div
         style={{
-          background: 'linear-gradient(90deg, #0F766E 0%, #1E3A8A 100%)',
+          background: 'linear-gradient(90deg, #C67C5B 0%, #D4A574 100%)',
           padding: '32px 40px',
           textAlign: 'center',
         }}
@@ -39,7 +39,7 @@ const PosterExport = forwardRef<HTMLDivElement>(function PosterExport(_, ref) {
       <div style={{ padding: '32px 40px' }}>
         {/* Real Issue */}
         <div style={{ marginBottom: '28px' }}>
-          <div style={{ fontSize: '13px', fontWeight: '600', color: '#0F766E', marginBottom: '10px', letterSpacing: '1px' }}>
+          <div style={{ fontSize: '13px', fontWeight: '600', color: '#C67C5B', marginBottom: '10px', letterSpacing: '1px' }}>
             你的真实问题
           </div>
           <div style={{ fontSize: '22px', color: '#1A1A2E', lineHeight: '1.7' }}>
@@ -57,7 +57,7 @@ const PosterExport = forwardRef<HTMLDivElement>(function PosterExport(_, ref) {
             marginBottom: '28px',
           }}
         >
-          <div style={{ fontSize: '13px', fontWeight: '600', color: '#0F766E', marginBottom: '10px', letterSpacing: '1px' }}>
+          <div style={{ fontSize: '13px', fontWeight: '600', color: '#C67C5B', marginBottom: '10px', letterSpacing: '1px' }}>
             建议方向
           </div>
           <div style={{ fontSize: '18px', color: '#1A1A2E', lineHeight: '1.7' }}>
@@ -141,7 +141,7 @@ const PosterExport = forwardRef<HTMLDivElement>(function PosterExport(_, ref) {
                       padding: '10px 12px',
                     }}
                   >
-                    <div style={{ fontSize: '12px', fontWeight: '600', color: '#0F766E', marginBottom: '4px' }}>
+                    <div style={{ fontSize: '12px', fontWeight: '600', color: '#C67C5B', marginBottom: '4px' }}>
                       ✅ 若达到
                     </div>
                     <div style={{ fontSize: '13px', color: '#374151', lineHeight: '1.5' }}>
@@ -191,7 +191,7 @@ const PosterExport = forwardRef<HTMLDivElement>(function PosterExport(_, ref) {
             color: '#D1D5DB',
           }}
         >
-          由「决策透镜」Decision Lens 生成 · {new Date(state.updatedAt).toLocaleString('zh-CN')}
+          AI生成内容仅作为参考使用，请谨慎决策 · 由Senmoo「决策透镜」生成 · {new Date(state.updatedAt).toLocaleString('zh-CN')}
         </div>
       </div>
     </div>

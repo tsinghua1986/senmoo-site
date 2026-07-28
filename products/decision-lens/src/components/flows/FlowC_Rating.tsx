@@ -53,7 +53,7 @@ export default function FlowC_Rating() {
 
   const getQuadrantLabel = (urgency: number, importance: number) => {
     if (urgency >= 6 && importance >= 6) return { text: '立即去做', color: 'text-red-600 bg-red-50' };
-    if (urgency < 6 && importance >= 6) return { text: '安排日程', color: 'text-teal-600 bg-teal-50' };
+    if (urgency < 6 && importance >= 6) return { text: '安排日程', color: 'text-orange-600 bg-orange-50' };
     if (urgency >= 6 && importance < 6) return { text: '委托他人', color: 'text-amber-600 bg-amber-50' };
     return { text: '果断放弃', color: 'text-gray-500 bg-gray-50' };
   };
@@ -91,13 +91,13 @@ export default function FlowC_Rating() {
           className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100"
         >
           <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
-              <svg className="w-4 h-4 text-[#0F766E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
+              <svg className="w-4 h-4 text-[#C67C5B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-[#0F766E] mb-1">核心问题重构</h3>
+              <h3 className="text-sm font-semibold text-[#C67C5B] mb-1">核心问题重构</h3>
               <p className="text-gray-800 text-base leading-relaxed">{state.realIssue}</p>
             </div>
           </div>
@@ -221,11 +221,11 @@ export default function FlowC_Rating() {
             onChange={e => setNewTask(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') addTask(); }}
             placeholder="添加一个待办任务..."
-            className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-teal-400"
+            className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-orange-400"
           />
           <button
             onClick={addTask}
-            className="px-4 py-2 text-sm rounded-lg bg-[#0F766E] text-white hover:bg-[#0D6B63] disabled:opacity-40"
+            className="px-4 py-2 text-sm rounded-lg bg-[#C67C5B] text-white hover:bg-[#B06D50] disabled:opacity-40"
             disabled={!newTask.trim()}
           >添加</button>
         </div>
@@ -236,7 +236,7 @@ export default function FlowC_Rating() {
         <button
           onClick={handleConfirm}
           disabled={tasks.length === 0}
-          className="px-8 py-3 rounded-2xl bg-[#0F766E] text-white font-semibold hover:bg-[#0D6B63] disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-lg shadow-teal-600/20"
+          className="px-8 py-3 rounded-2xl bg-[#C67C5B] text-white font-semibold hover:bg-[#B06D50] disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-lg shadow-orange-600/20"
         >
           确认评级，进入四象限
         </button>
