@@ -18,10 +18,11 @@ if (readdirSync(publicDL).includes('assets')) {
   rmSync(assetsDir, { recursive: true, force: true });
 }
 
-// Copy all files from DL dist to public/tools/decision-lens
+// Copy all files from DL dist to public/tools/decision-lens (skip index.html to avoid conflicting with Astro page)
 function copyDir(src, dest) {
   mkdirSync(dest, { recursive: true });
   for (const entry of readdirSync(src)) {
+    if (entry === 'index.html') continue; // Astro page handles routing + auth
     const s = join(src, entry);
     const d = join(dest, entry);
     if (statSync(s).isDirectory()) {
