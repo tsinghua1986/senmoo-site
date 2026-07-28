@@ -1,10 +1,17 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { v4 as uuidv4 } from "uuid";
+import { createClient } from "@supabase/supabase-js";
 import { useDecision } from "../store/DecisionContext";
 import { callStage2, ApiError, getConsecutiveFailures } from "../services/api";
 import { trackEvent } from "../services/analytics";
 import type { FlowFactor, Stage2Response, DialogueMessage } from "../types";
+import AuthModal from "./AuthModal";
+
+const supabase = createClient(
+  "https://qwkqotkazgqpzqtjecvu.supabase.co",
+  "sb_publishable_yHdsg6K1ZON8QghpuhpElA_cptNP2MG"
+);
 
 const SCENE_TAGS = [
   { label: "职场转型", prompt: "我在考虑是否要换一份工作/转行，目前的状态让我很纠结..." },
@@ -15,6 +22,8 @@ const SCENE_TAGS = [
 
 export default function Stage1InputDump() {
   const { state, dispatch, apiConfig } = useDecision();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [pendingSubmit, setPendingSubmit] = useState(false);
   const [text, setText] = useState(state.rawInput);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -57,6 +66,20 @@ export default function Stage1InputDump() {
   };
 
   const handleSubmit = async () => {
+    if (!canSubmit || loading) return;
+
+    // 检查登录状态
+    const { data } = await supabase.auth.getUser();
+    if (!data?.user) {
+      setShowAuthModal(true);
+      setPendingSubmit(true);
+      return;
+    }
+
+    doSubmit();
+  };
+
+  const doSubmit = async () => {
     if (!canSubmit || loading) return;
     dispatch({ type: "SET_RAW_INPUT", payload: text });
     setLoading(true);
@@ -302,20 +325,28 @@ export default function Stage1InputDump() {
 
       {/* Submit Button */}
       {!followUp && (
-        <button
-          onClick={handleSubmit}
-          disabled={!canSubmit || loading}
-          className="w-full py-4 rounded-2xl bg-[#C67C5B] text-white font-semibold text-base hover:bg-[#B06D50] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg shadow-orange-600/20 hover:shadow-orange-600/30"
-        >
-          {loading ? (
-            <span className="flex items-center justify-center gap-2">
-              <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              正在透视大脑认知中...
-            </span>
-          ) : (
-            "开始拆解"
+        <>
+          <button
+            onClick={handleSubmit}
+            disabled={!canSubmit || loading}
+            className="w-full py-4 rounded-2xl bg-[#C67C5B] text-white font-semibold text-base hover:bg-[#B06D50] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg shadow-orange-600/20 hover:shadow-orange-600/30"
+          >
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                正在透视大脑认知中...
+              </span>
+            ) : (
+              "开始拆解"
+            )}
+          </button>
+          {showAuthModal && (
+            <AuthModal
+              onClose={() => { setShowAuthModal(false); setPendingSubmit(false); }}
+              onAuthSuccess={() => { setShowAuthModal(false); if (pendingSubmit) { setPendingSubmit(false); doSubmit(); } }}
+            />
           )}
-        </button>
+        </>
       )}
     </motion.div>
   );
