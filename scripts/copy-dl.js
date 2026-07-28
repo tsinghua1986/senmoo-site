@@ -2,7 +2,7 @@
  * Copy Decision Lens build output to Astro public directory.
  * Run after build:dl, before astro build.
  */
-import { copyFileSync, existsSync, mkdirSync, readdirSync, rmSync, statSync } from 'fs';
+import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -35,3 +35,16 @@ function copyDir(src, dest) {
 
 copyDir(dlDist, publicDL);
 console.log('Copied Decision Lens build to public/tools/decision-lens/');
+
+// Update index.astro with new hashed filenames
+const astroPage = join(root, 'src/pages/tools/decision-lens/index.astro');
+if (existsSync(astroPage)) {
+  const newAssets = readdirSync(assetsDir);
+  const jsFile = newAssets.find(f => f.endsWith('.js'));
+  const cssFile = newAssets.find(f => f.endsWith('.css'));
+  let content = readFileSync(astroPage, 'utf-8');
+  if (jsFile) content = content.replace(/\/tools\/decision-lens\/assets\/index-[^"']+\.js/, `/tools/decision-lens/assets/${jsFile}`);
+  if (cssFile) content = content.replace(/\/tools\/decision-lens\/assets\/index-[^"']+\.css/, `/tools/decision-lens/assets/${cssFile}`);
+  writeFileSync(astroPage, content);
+  console.log(`Updated index.astro → JS: ${jsFile}, CSS: ${cssFile}`);
+}
