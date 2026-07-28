@@ -12,22 +12,62 @@
     <title>决策透镜 | Decision Lens</title>
     <style>
       body { margin: 0; font-family: -apple-system, sans-serif; background: #FAFAF7; }
-      .dl-auth-check {
+      .dl-auth-overlay {
+        position: fixed; inset: 0; background: rgba(0,0,0,0.3);
+        display: flex; align-items: center; justify-content: center; z-index: 9999;
+      }
+      .dl-auth-card {
+        background: #fff; border-radius: 16px; padding: 32px; width: 360px; max-width: 90vw;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      }
+      .dl-auth-card h2 {
+        margin: 0 0 4px; font-size: 1.3rem; color: #2d2d3a; text-align: center;
+      }
+      .dl-auth-card .dl-subtitle {
+        text-align: center; color: #8a8a9a; font-size: 0.85rem; margin: 0 0 24px;
+      }
+      .dl-auth-field { margin-bottom: 14px; }
+      .dl-auth-field label {
+        display: block; font-size: 0.82rem; color: #5a5a6e; margin-bottom: 5px; font-weight: 500;
+      }
+      .dl-auth-field input {
+        width: 100%; padding: 10px 14px; border: 1.5px solid #e0ddd8; border-radius: 10px;
+        font-size: 0.92rem; outline: none; box-sizing: border-box; transition: border-color 0.2s;
+        background: #FAFAF7;
+      }
+      .dl-auth-field input:focus { border-color: #C67C5B; }
+      .dl-auth-btn {
+        width: 100%; padding: 12px; border: none; border-radius: 999px;
+        background: #C67C5B; color: #fff; font-size: 0.95rem; font-weight: 600;
+        cursor: pointer; margin-top: 8px; transition: opacity 0.2s;
+      }
+      .dl-auth-btn:hover { opacity: 0.9; }
+      .dl-auth-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+      .dl-auth-switch {
+        text-align: center; margin-top: 16px; font-size: 0.85rem; color: #8a8a9a;
+      }
+      .dl-auth-switch a {
+        color: #C67C5B; cursor: pointer; text-decoration: none; font-weight: 500;
+      }
+      .dl-auth-switch a:hover { text-decoration: underline; }
+      .dl-auth-error {
+        background: #fef0ed; color: #c0392b; padding: 10px 14px; border-radius: 10px;
+        font-size: 0.83rem; margin-bottom: 14px; display: none;
+      }
+      .dl-auth-success {
+        background: #edfaf0; color: #27ae60; padding: 10px 14px; border-radius: 10px;
+        font-size: 0.83rem; margin-bottom: 14px; display: none;
+      }
+      .dl-loading {
         display: flex; align-items: center; justify-content: center;
         min-height: 100vh; flex-direction: column; gap: 16px;
       }
-      .dl-auth-check p { color: #5a5a6e; font-size: 0.95rem; }
-      .dl-auth-check a {
-        padding: 10px 24px; border-radius: 999px;
-        background: #C67C5B; color: #fff; text-decoration: none;
-        font-weight: 600; font-size: 0.9rem;
-      }
-      .dl-auth-check a:hover { opacity: 0.9; }
+      .dl-loading p { color: #5a5a6e; font-size: 0.95rem; }
     </style>
   </head>
   <body>
     <div id="root">
-      <div class="dl-auth-check" id="dl-auth-message">
+      <div class="dl-loading" id="dl-auth-message">
         <p>正在检查登录状态...</p>
       </div>
     </div>
@@ -35,25 +75,147 @@
       const SUPABASE_URL = 'https://qwkqotkazgqpzqtjecvu.supabase.co';
       const SUPABASE_ANON_KEY = 'sb_publishable_yHdsg6K1ZON8QghpuhpElA_cptNP2MG';
 
+      const AUTH_HTML = `
+        <div class="dl-auth-overlay">
+          <div class="dl-auth-card">
+            <h2 id="dl-auth-title">登录</h2>
+            <p class="dl-subtitle">登录后使用决策透镜</p>
+            <div class="dl-auth-error" id="dl-auth-error"></div>
+            <div class="dl-auth-success" id="dl-auth-success"></div>
+            <form id="dl-auth-form">
+              <div class="dl-auth-field" id="dl-field-nickname" style="display:none">
+                <label>昵称（选填）</label>
+                <input type="text" id="dl-nickname" placeholder="你的昵称" />
+              </div>
+              <div class="dl-auth-field">
+                <label>邮箱</label>
+                <input type="email" id="dl-email" placeholder="your@email.com" required />
+              </div>
+              <div class="dl-auth-field">
+                <label>密码</label>
+                <input type="password" id="dl-password" placeholder="输入密码" required minlength="6" />
+              </div>
+              <div class="dl-auth-field" id="dl-field-confirm" style="display:none">
+                <label>确认密码</label>
+                <input type="password" id="dl-confirm" placeholder="再次输入密码" required minlength="6" />
+              </div>
+              <button type="submit" class="dl-auth-btn" id="dl-auth-submit">登  录</button>
+            </form>
+            <div class="dl-auth-switch">
+              <span id="dl-switch-text">还没有账号？</span>
+              <a id="dl-switch-link">注册</a>
+            </div>
+          </div>
+        </div>`;
+
+      let isLogin = true;
+      let supabase = null;
+
       (async () => {
         try {
           const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
-          const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+          supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
           const { data } = await supabase.auth.getUser();
           if (!data?.user) {
-            document.getElementById('root').innerHTML = '<div class="dl-auth-check"><p>请先登录后再使用决策透镜</p><a href="/login">去登录</a></div>';
+            showAuthForm();
             return;
           }
         } catch (e) {
           console.error('Auth check failed:', e);
-          document.getElementById('root').innerHTML = '<div class="dl-auth-check"><p>登录验证失败，请刷新重试</p><a href="/login">去登录</a></div>';
+          showAuthForm();
           return;
         }
         loadApp();
       })();
 
+      function showAuthForm() {
+        document.getElementById('root').innerHTML = AUTH_HTML;
+        bindAuthEvents();
+      }
+
+      function bindAuthEvents() {
+        const form = document.getElementById('dl-auth-form');
+        const submitBtn = document.getElementById('dl-auth-submit');
+        const errorEl = document.getElementById('dl-auth-error');
+        const successEl = document.getElementById('dl-auth-success');
+        const switchLink = document.getElementById('dl-switch-link');
+        const switchText = document.getElementById('dl-switch-text');
+        const titleEl = document.getElementById('dl-auth-title');
+        const fieldNickname = document.getElementById('dl-field-nickname');
+        const fieldConfirm = document.getElementById('dl-field-confirm');
+
+        switchLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          isLogin = !isLogin;
+          errorEl.style.display = 'none';
+          successEl.style.display = 'none';
+          if (isLogin) {
+            titleEl.textContent = '登录';
+            submitBtn.textContent = '登  录';
+            switchText.textContent = '还没有账号？';
+            switchLink.textContent = '注册';
+            fieldNickname.style.display = 'none';
+            fieldConfirm.style.display = 'none';
+          } else {
+            titleEl.textContent = '注册';
+            submitBtn.textContent = '注  册';
+            switchText.textContent = '已有账号？';
+            switchLink.textContent = '登录';
+            fieldNickname.style.display = '';
+            fieldConfirm.style.display = '';
+          }
+        });
+
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          errorEl.style.display = 'none';
+          successEl.style.display = 'none';
+          submitBtn.disabled = true;
+
+          const email = document.getElementById('dl-email').value;
+          const password = document.getElementById('dl-password').value;
+
+          if (isLogin) {
+            const { error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) {
+              errorEl.textContent = error.message.includes('Invalid') ? '邮箱或密码错误' : error.message;
+              errorEl.style.display = 'block';
+              submitBtn.disabled = false;
+            } else {
+              successEl.textContent = '登录成功，正在加载...';
+              successEl.style.display = 'block';
+              setTimeout(() => loadApp(), 500);
+            }
+          } else {
+            const confirm = document.getElementById('dl-confirm').value;
+            if (password !== confirm) {
+              errorEl.textContent = '两次密码不一致';
+              errorEl.style.display = 'block';
+              submitBtn.disabled = false;
+              return;
+            }
+            const nickname = document.getElementById('dl-nickname').value;
+            const { error } = await supabase.auth.signUp({
+              email, password,
+              options: { data: { nickname: nickname || '' } }
+            });
+            if (error) {
+              errorEl.textContent = error.message.includes('already') ? '该邮箱已注册' : error.message;
+              errorEl.style.display = 'block';
+              submitBtn.disabled = false;
+            } else {
+              successEl.textContent = '注册成功！正在加载...';
+              successEl.style.display = 'block';
+              setTimeout(() => loadApp(), 500);
+            }
+          }
+        });
+      }
+
       function loadApp() {
         document.getElementById('dl-auth-message')?.remove();
+        // Also remove auth overlay if present
+        document.querySelector('.dl-auth-overlay')?.remove();
         const script = document.createElement('script');
         script.type = 'module';
         script.src = '/tools/decision-lens/index-CoQ4y59G.js';
