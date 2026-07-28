@@ -982,3 +982,83 @@ img { max-width: 100%; display: block; }
   .admin-charts-row { grid-template-columns: 1fr; }
   .auth-card { padding: 32px 24px; }
 }
+
+/* ===== AUTH MODAL ===== */
+.auth-modal-overlay {
+  position: fixed; inset: 0; z-index: 10000;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex; align-items: center; justify-content: center;
+  animation: authFadeIn 0.2s ease;
+}
+@keyframes authFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.auth-modal-card {
+  background: #fff; border-radius: 16px; padding: 32px;
+  width: 400px; max-width: 90vw; position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  animation: authSlideIn 0.25s ease;
+}
+@keyframes authSlideIn {
+  from { opacity: 0; transform: translateY(-20px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.auth-modal-close {
+  position: absolute; top: 16px; right: 16px;
+  width: 28px; height: 28px; border: none; background: none;
+  cursor: pointer; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.auth-modal-close:hover { background: #f0f0f0; }
+.auth-modal-close::before, .auth-modal-close::after {
+  content: ''; position: absolute;
+  width: 16px; height: 2px; background: #999;
+}
+.auth-modal-close::before { transform: rotate(45deg); }
+.auth-modal-close::after { transform: rotate(-45deg); }
+
+.auth-modal-tabs {
+  display: flex; border-bottom: 1px solid #eee; margin-bottom: 24px;
+}
+.auth-modal-tab {
+  flex: 1; padding: 12px; border: none; background: none;
+  font-size: 0.95rem; font-weight: 500; color: #999;
+  cursor: pointer; position: relative; transition: color 0.2s;
+}
+.auth-modal-tab.active { color: #1a1a2e; }
+.auth-modal-tab.active::after {
+  content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
+  height: 2px; background: #C67C5B; border-radius: 1px;
+}
+.auth-modal-tab:hover { color: #1a1a2e; }
+
+.auth-modal-form { display: flex; flex-direction: column; gap: 16px; }
+.auth-modal-field label {
+  display: block; font-size: 0.82rem; color: #666;
+  margin-bottom: 6px; font-weight: 500;
+}
+.auth-modal-field input {
+  width: 100%; padding: 10px 14px; border: 1.5px solid #e0ddd8;
+  border-radius: 10px; font-size: 0.92rem; outline: none;
+  background: #FAFAF7; transition: border-color 0.2s; box-sizing: border-box;
+}
+.auth-modal-field input:focus { border-color: #C67C5B; }
+
+.auth-modal-submit {
+  width: 100%; padding: 12px; border: none; border-radius: 999px;
+  background: #C67C5B; color: #fff; font-size: 0.95rem; font-weight: 600;
+  cursor: pointer; margin-top: 8px; transition: opacity 0.2s;
+}
+.auth-modal-submit:hover { opacity: 0.9; }
+.auth-modal-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.auth-modal-error {
+  background: #fef0ed; color: #c0392b; padding: 10px 14px;
+  border-radius: 10px; font-size: 0.83rem; margin-bottom: 16px;
+}
+.auth-modal-success {
+  background: #edfaf0; color: #27ae60; padding: 10px 14px;
+  border-radius: 10px; font-size: 0.83rem; margin-bottom: 16px;
+}

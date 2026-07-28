@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { SITE_CONFIG } from '../config';
 import { supabase } from '../lib/supabase';
+import AuthModal from './auth/AuthModal';
 
 export default function Nav({ currentPath = '/' }) {
   const allLinks = [
@@ -13,6 +14,7 @@ export default function Nav({ currentPath = '/' }) {
   );
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState(null);
+  const [authModal, setAuthModal] = useState(null); // null | 'login' | 'register'
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -41,34 +43,39 @@ export default function Nav({ currentPath = '/' }) {
   };
 
   return (
-    <nav className={`nav${scrolled ? ' scrolled' : ''}`}>
-      <div className="nav-left">
-        <a href="/" className="nav-logo">Senmoo</a>
-        <div className="nav-links">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className={`nav-link${isActive(link.href) ? ' active' : ''}`}
-            >
-              {link.label}
-            </a>
-          ))}
+    <>
+      <nav className={`nav${scrolled ? ' scrolled' : ''}`}>
+        <div className="nav-left">
+          <a href="/" className="nav-logo">Senmoo</a>
+          <div className="nav-links">
+            {navLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className={`nav-link${isActive(link.href) ? ' active' : ''}`}
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
         </div>
-      </div>
-      <div className="nav-auth">
-        {user ? (
-          <>
-            <span className="nav-user-email">{user.email}</span>
-            <button onClick={handleLogout} className="nav-auth-btn nav-auth-logout">登出</button>
-          </>
-        ) : (
-          <>
-            <a href="/login" className="nav-auth-btn">登录</a>
-            <a href="/register" className="nav-auth-btn nav-auth-register">注册</a>
-          </>
-        )}
-      </div>
-    </nav>
+        <div className="nav-auth">
+          {user ? (
+            <>
+              <span className="nav-user-email">{user.email}</span>
+              <button onClick={handleLogout} className="nav-auth-btn nav-auth-logout">登出</button>
+            </>
+          ) : (
+            <>
+              <button onClick={() => setAuthModal('login')} className="nav-auth-btn">登录</button>
+              <button onClick={() => setAuthModal('register')} className="nav-auth-btn nav-auth-register">注册</button>
+            </>
+          )}
+        </div>
+      </nav>
+      {authModal && (
+        <AuthModal mode={authModal} onClose={() => setAuthModal(null)} />
+      )}
+    </>
   );
 }
