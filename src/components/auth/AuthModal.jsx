@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 
+// 管理员邮箱列表，禁止前端注册
+const ADMIN_EMAILS = ['admin@senmoo.com'];
+
 export default function AuthModal({ mode: initialMode = 'login', onClose }) {
   const [mode, setMode] = useState(initialMode);
   const [email, setEmail] = useState('');
@@ -29,6 +32,12 @@ export default function AuthModal({ mode: initialMode = 'login', onClose }) {
     } else {
       if (password !== confirmPassword) {
         setError('两次密码不一致');
+        setLoading(false);
+        return;
+      }
+      // 禁止注册管理员邮箱
+      if (ADMIN_EMAILS.includes(email.toLowerCase())) {
+        setError('该邮箱不可注册');
         setLoading(false);
         return;
       }

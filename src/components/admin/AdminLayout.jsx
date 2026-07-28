@@ -28,9 +28,11 @@ export default function AdminLayout({ currentPath = '/admin', children }) {
       window.location.href = '/admin/login';
       return;
     }
-    // 检查是否是管理员（通过 email 判断）
-    const adminEmail = 'admin@senmoo.com';
-    if (!session?.user?.email || session.user.email !== adminEmail) {
+    // 检查是否是管理员（通过 user_metadata 中的 is_admin 标记判断）
+    // user_metadata 只能通过 Supabase Dashboard 或 service_role key 设置
+    // 前端注册的用户不会有此标记，即使知道管理员邮箱也无法进入
+    const isAdmin = session.user?.user_metadata?.is_admin === true;
+    if (!isAdmin) {
       alert('无管理员权限');
       await supabase.auth.signOut();
       window.location.href = '/admin/login';

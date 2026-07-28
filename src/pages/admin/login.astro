@@ -41,14 +41,24 @@ import '../../styles/global.css';
       btn.disabled = true;
       btn.textContent = '登录中...';
       errEl.style.display = 'none';
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
         errEl.textContent = error.message === 'Invalid login credentials' ? '账号或密码错误' : error.message;
         errEl.style.display = 'block';
         btn.disabled = false;
         btn.textContent = '登  录';
       } else {
-        window.location.href = '/admin';
+        // 检查是否是管理员（user_metadata.is_admin 只能由管理员在 Supabase Dashboard 设置）
+        const isAdmin = data.user?.user_metadata?.is_admin === true;
+        if (!isAdmin) {
+          errEl.textContent = '该账号无管理员权限';
+          errEl.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = '登  录';
+          await supabase.auth.signOut();
+        } else {
+          window.location.href = '/admin';
+        }
       }
     });
   </script>

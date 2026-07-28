@@ -6,6 +6,9 @@ const supabase = createClient(
   'sb_publishable_yHdsg6K1ZON8QghpuhpElA_cptNP2MG'
 );
 
+// 管理员邮箱列表，禁止前端注册
+const ADMIN_EMAILS = ['admin@senmoo.com'];
+
 interface AuthModalProps {
   onClose: () => void;
   onAuthSuccess: () => void;
@@ -39,6 +42,11 @@ export default function AuthModal({ onClose, onAuthSuccess }: AuthModalProps) {
     } else {
       if (password !== confirmPassword) {
         setError('两次密码不一致');
+        setLoading(false);
+        return;
+      }
+      if (ADMIN_EMAILS.includes(email.toLowerCase())) {
+        setError('该邮箱不可注册');
         setLoading(false);
         return;
       }
