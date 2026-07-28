@@ -1,4 +1,7 @@
 ---
+import '../../styles/global.css';
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
 ---
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -7,7 +10,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>管理员登录 - Senmoo</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="stylesheet" href="/src/styles/global.css" />
 </head>
 <body>
   <div class="auth-container">
@@ -27,11 +29,9 @@
       </form>
     </div>
   </div>
-  <script>
-    import { createClient } from '@supabase/supabase-js';
-    const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || '';
-    const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
+  <script is:inline type="module" define:vars={{ supabaseUrl, supabaseAnonKey }}>
     if (supabaseUrl && supabaseAnonKey) {
+      const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
       const supabase = createClient(supabaseUrl, supabaseAnonKey);
       document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
         e.preventDefault();
