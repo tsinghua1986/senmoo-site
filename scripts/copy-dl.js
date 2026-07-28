@@ -2,7 +2,7 @@
  * Copy Decision Lens build output to Astro public directory.
  * Run after build:dl, before astro build.
  */
-import { copyFileSync, mkdirSync, readdirSync, rmSync, statSync } from 'fs';
+import { copyFileSync, existsSync, mkdirSync, readdirSync, rmSync, statSync } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -14,7 +14,7 @@ const publicDL = join(root, 'public/tools/decision-lens');
 
 // Clear old assets
 const assetsDir = join(publicDL, 'assets');
-if (readdirSync(publicDL).includes('assets')) {
+if (existsSync(publicDL) && readdirSync(publicDL).includes('assets')) {
   rmSync(assetsDir, { recursive: true, force: true });
 }
 
