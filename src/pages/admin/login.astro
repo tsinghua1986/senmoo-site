@@ -1,7 +1,5 @@
 ---
 import '../../styles/global.css';
-const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
 ---
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -29,30 +27,30 @@ const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
       </form>
     </div>
   </div>
-  <script is:inline type="module" define:vars={{ supabaseUrl, supabaseAnonKey }}>
-    if (supabaseUrl && supabaseAnonKey) {
-      const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
-      const supabase = createClient(supabaseUrl, supabaseAnonKey);
-      document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('admin-email').value;
-        const password = document.getElementById('admin-password').value;
-        const btn = document.getElementById('admin-login-btn');
-        const errEl = document.getElementById('admin-login-error');
-        btn.disabled = true;
-        btn.textContent = '登录中...';
-        errEl.style.display = 'none';
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) {
-          errEl.textContent = error.message === 'Invalid login credentials' ? '账号或密码错误' : error.message;
-          errEl.style.display = 'block';
-          btn.disabled = false;
-          btn.textContent = '登  录';
-        } else {
-          window.location.href = '/admin';
-        }
-      });
-    }
+  <script is:inline type="module">
+    const SUPABASE_URL = 'https://qwkqotkazgqpzqtjecvu.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_yHdsg6K1ZON8QghpuhpElA_cptNP2MG';
+    const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('admin-email').value;
+      const password = document.getElementById('admin-password').value;
+      const btn = document.getElementById('admin-login-btn');
+      const errEl = document.getElementById('admin-login-error');
+      btn.disabled = true;
+      btn.textContent = '登录中...';
+      errEl.style.display = 'none';
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        errEl.textContent = error.message === 'Invalid login credentials' ? '账号或密码错误' : error.message;
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = '登  录';
+      } else {
+        window.location.href = '/admin';
+      }
+    });
   </script>
 </body>
 </html>

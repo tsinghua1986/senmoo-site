@@ -29,7 +29,7 @@ export default function AdminLayout({ currentPath = '/admin', children }) {
       return;
     }
     // 检查是否是管理员（通过 email 判断）
-    const adminEmail = import.meta.env.PUBLIC_ADMIN_EMAIL || 'admin@senmoo.com';
+    const adminEmail = 'admin@senmoo.com';
     if (!session?.user?.email || session.user.email !== adminEmail) {
       alert('无管理员权限');
       await supabase.auth.signOut();
