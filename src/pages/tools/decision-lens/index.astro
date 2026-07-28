@@ -35,18 +35,22 @@
       const SUPABASE_URL = 'https://qwkqotkazgqpzqtjecvu.supabase.co';
       const SUPABASE_ANON_KEY = 'sb_publishable_yHdsg6K1ZON8QghpuhpElA_cptNP2MG';
 
-      import('https://esm.sh/@supabase/supabase-js@2').then(({ createClient }) => {
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        return supabase.auth.getUser();
-      }).then(({ data }) => {
-        if (!data?.user) {
-          document.getElementById('root').innerHTML = '<div class="dl-auth-check"><p>请先登录后再使用决策透镜</p><a href="/login">去登录</a></div>';
-        } else {
-          loadApp();
+      (async () => {
+        try {
+          const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
+          const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+          const { data } = await supabase.auth.getUser();
+          if (!data?.user) {
+            document.getElementById('root').innerHTML = '<div class="dl-auth-check"><p>请先登录后再使用决策透镜</p><a href="/login">去登录</a></div>';
+            return;
+          }
+        } catch (e) {
+          console.error('Auth check failed:', e);
+          document.getElementById('root').innerHTML = '<div class="dl-auth-check"><p>登录验证失败，请刷新重试</p><a href="/login">去登录</a></div>';
+          return;
         }
-      }).catch(() => {
         loadApp();
-      });
+      })();
 
       function loadApp() {
         document.getElementById('dl-auth-message')?.remove();
