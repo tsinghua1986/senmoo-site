@@ -13,22 +13,52 @@
     <style is:global>
       body { margin: 0; font-family: -apple-system, sans-serif; background: #FAFAF7; }
       .dl-auth-overlay {
-        position: fixed; inset: 0; background: rgba(0,0,0,0.3);
+        position: fixed; inset: 0; background: rgba(0,0,0,0.4);
         display: flex; align-items: center; justify-content: center; z-index: 9999;
+        animation: dlFadeIn 0.2s ease;
       }
+      @keyframes dlFadeIn { from { opacity: 0; } to { opacity: 1; } }
       .dl-auth-card {
-        background: #fff; border-radius: 16px; padding: 32px; width: 360px; max-width: 90vw;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        background: #fff; border-radius: 16px; padding: 32px; width: 400px; max-width: 90vw;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15); position: relative;
+        animation: dlSlideIn 0.25s ease;
       }
-      .dl-auth-card h2 {
-        margin: 0 0 4px; font-size: 1.3rem; color: #2d2d3a; text-align: center;
+      @keyframes dlSlideIn {
+        from { opacity: 0; transform: translateY(-20px) scale(0.97); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
       }
-      .dl-auth-card .dl-subtitle {
-        text-align: center; color: #8a8a9a; font-size: 0.85rem; margin: 0 0 24px;
+      .dl-auth-close {
+        position: absolute; top: 16px; right: 16px;
+        width: 28px; height: 28px; border: none; background: none;
+        cursor: pointer; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        transition: background 0.2s;
       }
-      .dl-auth-field { margin-bottom: 14px; }
+      .dl-auth-close:hover { background: #f0f0f0; }
+      .dl-auth-close::before, .dl-auth-close::after {
+        content: ''; position: absolute;
+        width: 16px; height: 2px; background: #999;
+      }
+      .dl-auth-close::before { transform: rotate(45deg); }
+      .dl-auth-close::after { transform: rotate(-45deg); }
+      .dl-auth-tabs {
+        display: flex; border-bottom: 1px solid #eee; margin-bottom: 24px;
+      }
+      .dl-auth-tab {
+        flex: 1; padding: 12px; border: none; background: none;
+        font-size: 0.95rem; font-weight: 500; color: #999;
+        cursor: pointer; position: relative; transition: color 0.2s;
+      }
+      .dl-auth-tab.active { color: #1a1a2e; }
+      .dl-auth-tab.active::after {
+        content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
+        height: 2px; background: #C67C5B; border-radius: 1px;
+      }
+      .dl-auth-tab:hover { color: #1a1a2e; }
+      .dl-auth-form { display: flex; flex-direction: column; gap: 16px; }
       .dl-auth-field label {
-        display: block; font-size: 0.82rem; color: #5a5a6e; margin-bottom: 5px; font-weight: 500;
+        display: block; font-size: 0.82rem; color: #666;
+        margin-bottom: 6px; font-weight: 500;
       }
       .dl-auth-field input {
         width: 100%; padding: 10px 14px; border: 1.5px solid #e0ddd8; border-radius: 10px;
@@ -43,46 +73,52 @@
       }
       .dl-auth-btn:hover { opacity: 0.9; }
       .dl-auth-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-      .dl-auth-switch {
-        text-align: center; margin-top: 16px; font-size: 0.85rem; color: #8a8a9a;
-      }
-      .dl-auth-switch a {
-        color: #C67C5B; cursor: pointer; text-decoration: none; font-weight: 500;
-      }
-      .dl-auth-switch a:hover { text-decoration: underline; }
       .dl-auth-error {
         background: #fef0ed; color: #c0392b; padding: 10px 14px; border-radius: 10px;
-        font-size: 0.83rem; margin-bottom: 14px; display: none;
+        font-size: 0.83rem; margin-bottom: 16px;
       }
       .dl-auth-success {
         background: #edfaf0; color: #27ae60; padding: 10px 14px; border-radius: 10px;
-        font-size: 0.83rem; margin-bottom: 14px; display: none;
+        font-size: 0.83rem; margin-bottom: 16px;
       }
-      .dl-loading {
-        display: flex; align-items: center; justify-content: center;
-        min-height: 100vh; flex-direction: column; gap: 16px;
-      }
-      .dl-loading p { color: #5a5a6e; font-size: 0.95rem; }
     </style>
   </head>
   <body>
-    <div id="root">
-      <div class="dl-loading" id="dl-auth-message">
-        <p>正在检查登录状态...</p>
-      </div>
-    </div>
+    <div id="root"></div>
     <script is:inline type="module">
       const SUPABASE_URL = 'https://qwkqotkazgqpzqtjecvu.supabase.co';
       const SUPABASE_ANON_KEY = 'sb_publishable_yHdsg6K1ZON8QghpuhpElA_cptNP2MG';
 
-      const AUTH_HTML = `
-        <div class="dl-auth-overlay">
+      // 先加载决策透镜应用
+      loadApp();
+
+      // 然后检查登录状态
+      (async () => {
+        try {
+          const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
+          const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+          const { data } = await supabase.auth.getUser();
+          if (!data?.user) {
+            showAuthForm(supabase);
+          }
+        } catch (e) {
+          console.error('Auth check failed:', e);
+          // 即使认证检查失败，应用已经加载了
+        }
+      })();
+
+      function getAuthHTML() {
+        return `
+        <div class="dl-auth-overlay" id="dl-auth-overlay">
           <div class="dl-auth-card">
-            <h2 id="dl-auth-title">登录</h2>
-            <p class="dl-subtitle">登录后使用决策透镜</p>
-            <div class="dl-auth-error" id="dl-auth-error"></div>
-            <div class="dl-auth-success" id="dl-auth-success"></div>
-            <form id="dl-auth-form">
+            <button class="dl-auth-close" id="dl-auth-close-btn" aria-label="关闭"></button>
+            <div class="dl-auth-tabs">
+              <button class="dl-auth-tab active" id="dl-tab-login">登录</button>
+              <button class="dl-auth-tab" id="dl-tab-register">注册</button>
+            </div>
+            <div class="dl-auth-error" id="dl-auth-error" style="display:none;"></div>
+            <div class="dl-auth-success" id="dl-auth-success" style="display:none;"></div>
+            <form class="dl-auth-form" id="dl-auth-form">
               <div class="dl-auth-field" id="dl-field-nickname" style="display:none">
                 <label>昵称（选填）</label>
                 <input type="text" id="dl-nickname" placeholder="你的昵称" />
@@ -101,69 +137,58 @@
               </div>
               <button type="submit" class="dl-auth-btn" id="dl-auth-submit">登  录</button>
             </form>
-            <div class="dl-auth-switch">
-              <span id="dl-switch-text">还没有账号？</span>
-              <a id="dl-switch-link">注册</a>
-            </div>
           </div>
         </div>`;
-
-      let isLogin = true;
-      let supabase = null;
-
-      (async () => {
-        try {
-          const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
-          supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-          const { data } = await supabase.auth.getUser();
-          if (!data?.user) {
-            showAuthForm();
-            return;
-          }
-        } catch (e) {
-          console.error('Auth check failed:', e);
-          showAuthForm();
-          return;
-        }
-        loadApp();
-      })();
-
-      function showAuthForm() {
-        document.getElementById('root').innerHTML = AUTH_HTML;
-        bindAuthEvents();
       }
 
-      function bindAuthEvents() {
-        const form = document.getElementById('dl-auth-form');
-        const submitBtn = document.getElementById('dl-auth-submit');
-        const errorEl = document.getElementById('dl-auth-error');
-        const successEl = document.getElementById('dl-auth-success');
-        const switchLink = document.getElementById('dl-switch-link');
-        const switchText = document.getElementById('dl-switch-text');
-        const titleEl = document.getElementById('dl-auth-title');
-        const fieldNickname = document.getElementById('dl-field-nickname');
-        const fieldConfirm = document.getElementById('dl-field-confirm');
+      function showAuthForm(supabase) {
+        const container = document.createElement('div');
+        container.innerHTML = getAuthHTML();
+        document.body.appendChild(container);
+        bindAuthEvents(supabase, container);
+      }
 
-        switchLink.addEventListener('click', (e) => {
-          e.preventDefault();
-          isLogin = !isLogin;
+      function hideAuthForm(container) {
+        container.remove();
+      }
+
+      function bindAuthEvents(supabase, container) {
+        let isLogin = true;
+        const form = container.querySelector('#dl-auth-form');
+        const submitBtn = container.querySelector('#dl-auth-submit');
+        const errorEl = container.querySelector('#dl-auth-error');
+        const successEl = container.querySelector('#dl-auth-success');
+        const tabLogin = container.querySelector('#dl-tab-login');
+        const tabRegister = container.querySelector('#dl-tab-register');
+        const closeBtn = container.querySelector('#dl-auth-close-btn');
+        const overlay = container.querySelector('#dl-auth-overlay');
+        const fieldNickname = container.querySelector('#dl-field-nickname');
+        const fieldConfirm = container.querySelector('#dl-field-confirm');
+
+        function switchMode(mode) {
+          isLogin = mode === 'login';
           errorEl.style.display = 'none';
           successEl.style.display = 'none';
           if (isLogin) {
-            titleEl.textContent = '登录';
+            tabLogin.classList.add('active');
+            tabRegister.classList.remove('active');
             submitBtn.textContent = '登  录';
-            switchText.textContent = '还没有账号？';
-            switchLink.textContent = '注册';
             fieldNickname.style.display = 'none';
             fieldConfirm.style.display = 'none';
           } else {
-            titleEl.textContent = '注册';
+            tabRegister.classList.add('active');
+            tabLogin.classList.remove('active');
             submitBtn.textContent = '注  册';
-            switchText.textContent = '已有账号？';
-            switchLink.textContent = '登录';
             fieldNickname.style.display = '';
             fieldConfirm.style.display = '';
           }
+        }
+
+        tabLogin.addEventListener('click', () => switchMode('login'));
+        tabRegister.addEventListener('click', () => switchMode('register'));
+        closeBtn.addEventListener('click', () => hideAuthForm(container));
+        overlay.addEventListener('click', (e) => {
+          if (e.target === overlay) hideAuthForm(container);
         });
 
         form.addEventListener('submit', async (e) => {
@@ -172,8 +197,8 @@
           successEl.style.display = 'none';
           submitBtn.disabled = true;
 
-          const email = document.getElementById('dl-email').value;
-          const password = document.getElementById('dl-password').value;
+          const email = container.querySelector('#dl-email').value;
+          const password = container.querySelector('#dl-password').value;
 
           if (isLogin) {
             const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -182,19 +207,19 @@
               errorEl.style.display = 'block';
               submitBtn.disabled = false;
             } else {
-              successEl.textContent = '登录成功，正在加载...';
+              successEl.textContent = '登录成功';
               successEl.style.display = 'block';
-              setTimeout(() => loadApp(), 500);
+              setTimeout(() => hideAuthForm(container), 500);
             }
           } else {
-            const confirm = document.getElementById('dl-confirm').value;
+            const confirm = container.querySelector('#dl-confirm').value;
             if (password !== confirm) {
               errorEl.textContent = '两次密码不一致';
               errorEl.style.display = 'block';
               submitBtn.disabled = false;
               return;
             }
-            const nickname = document.getElementById('dl-nickname').value;
+            const nickname = container.querySelector('#dl-nickname').value;
             const { error } = await supabase.auth.signUp({
               email, password,
               options: { data: { nickname: nickname || '' } }
@@ -204,18 +229,15 @@
               errorEl.style.display = 'block';
               submitBtn.disabled = false;
             } else {
-              successEl.textContent = '注册成功！正在加载...';
+              successEl.textContent = '注册成功';
               successEl.style.display = 'block';
-              setTimeout(() => loadApp(), 500);
+              setTimeout(() => hideAuthForm(container), 500);
             }
           }
         });
       }
 
       function loadApp() {
-        document.getElementById('dl-auth-message')?.remove();
-        // Also remove auth overlay if present
-        document.querySelector('.dl-auth-overlay')?.remove();
         const script = document.createElement('script');
         script.type = 'module';
         script.src = '/tools/decision-lens/assets/index-DyHm7e-y.js';
