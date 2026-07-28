@@ -89,6 +89,22 @@ export class ApiError extends Error {
 /* ===== Proxy Helper for Custom Endpoints ===== */
 
 /**
+ * Get Supabase auth token from localStorage for usage tracking.
+ */
+function getSupabaseToken(): string | null {
+  try {
+    // Supabase stores session in localStorage with key 'sb-{project}-auth-token'
+    const keys = Object.keys(localStorage);
+    const authKey = keys.find(k => k.includes('-auth-token'));
+    if (authKey) {
+      const session = JSON.parse(localStorage.getItem(authKey) || '{}');
+      return session?.access_token || null;
+    }
+  } catch {}
+  return null;
+}
+
+/**
  * Route custom endpoint calls through /dl-proxy to bypass CORS.
  * - Dev: handled by Vite's dl-api-proxy plugin
  * - Production: handled by Cloudflare Pages Function
@@ -97,9 +113,15 @@ function resolveCustomEndpoint(baseUrl: string): { url: string; extraHeaders: Re
   if (!baseUrl) return { url: baseUrl, extraHeaders: {} };
   try {
     const urlObj = new URL(baseUrl);
+    const headers: Record<string, string> = { 'x-dl-target': urlObj.origin };
+    // Attach Supabase token for usage tracking
+    const token = getSupabaseToken();
+    if (token) {
+      headers['x-dl-auth-token'] = token;
+    }
     return {
       url: `/dl-proxy${urlObj.pathname}`,
-      extraHeaders: { 'x-dl-target': urlObj.origin },
+      extraHeaders: headers,
     };
   } catch {
     return { url: baseUrl, extraHeaders: {} };
@@ -156,7 +178,12 @@ async function callLLM(
       url = resolved.url;
       extraHeaders = resolved.extraHeaders;
     } else {
-      url = 'https://api.openai.com/v1/chat/completions';
+      // Route through dl-proxy for usage tracking
+      const token = getSupabaseToken();
+      const authHeader: Record<string, string> = {};
+      if (token) authHeader['x-dl-auth-token'] = token;
+      url = '/dl-proxy/v1/chat/completions';
+      extraHeaders = { 'x-dl-target': 'https://api.deepseek.com', ...authHeader };
     }
 
     headers = {

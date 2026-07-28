@@ -1,6 +1,5 @@
 ---
-import AdminLayout from '../../components/admin/AdminLayout';
-import Dashboard from '../../components/admin/Dashboard';
+import RegisterForm from '../../components/auth/RegisterForm';
 ---
 
 <!DOCTYPE html>
@@ -8,13 +7,11 @@ import Dashboard from '../../components/admin/Dashboard';
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>管理仪表盘 - Senmoo Admin</title>
+  <title>注册 - Senmoo</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="stylesheet" href="/src/styles/global.css" />
 </head>
 <body>
-  <AdminLayout client:load currentPath="/admin">
-    <Dashboard client:load />
-  </AdminLayout>
+  <RegisterForm client:load />
 </body>
 </html>

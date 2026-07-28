@@ -1,6 +1,8 @@
 ---
-// Decision Lens - 内嵌子应用页面
-// 直接加载 public/tools/decision-lens/ 下的构建产物
+// Decision Lens - 内嵌子应用页面（独立全屏，不使用 Layout）
+// 需要登录后才能使用
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
 ---
 
 <!doctype html>
@@ -10,10 +12,56 @@
     <link rel="icon" type="image/svg+xml" href="/tools/decision-lens/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>决策透镜 | Decision Lens</title>
+    <style>
+      body { margin: 0; font-family: -apple-system, sans-serif; background: #FAFAF7; }
+      .dl-auth-check {
+        display: flex; align-items: center; justify-content: center;
+        min-height: 100vh; flex-direction: column; gap: 16px;
+      }
+      .dl-auth-check p { color: #5a5a6e; font-size: 0.95rem; }
+      .dl-auth-check a {
+        padding: 10px 24px; border-radius: 999px;
+        background: #C67C5B; color: #fff; text-decoration: none;
+        font-weight: 600; font-size: 0.9rem;
+      }
+      .dl-auth-check a:hover { opacity: 0.9; }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/tools/decision-lens/assets/index-CoQ4y59G.js"></script>
-    <link rel="stylesheet" href="/tools/decision-lens/assets/index-Q6YeN8NV.css">
+    <div id="root">
+      <div class="dl-auth-check" id="dl-auth-message">
+        <p>正在检查登录状态...</p>
+      </div>
+    </div>
+    <script is:inline type="module" define:vars={{ supabaseUrl, supabaseAnonKey }}>
+      if (!supabaseUrl || supabaseUrl.includes('your-project')) {
+        loadApp();
+      } else {
+        import('https://esm.sh/@supabase/supabase-js@2').then(({ createClient }) => {
+          const supabase = createClient(supabaseUrl, supabaseAnonKey);
+          return supabase.auth.getUser();
+        }).then(({ data }) => {
+          if (!data?.user) {
+            document.getElementById('root').innerHTML = '<div class="dl-auth-check"><p>请先登录后再使用决策透镜</p><a href="/login">去登录</a></div>';
+          } else {
+            loadApp();
+          }
+        }).catch(() => {
+          loadApp();
+        });
+      }
+
+      function loadApp() {
+        document.getElementById('dl-auth-message')?.remove();
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.src = '/tools/decision-lens/index-CoQ4y59G.js';
+        document.body.appendChild(script);
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = '/tools/decision-lens/index-Q6YeN8NV.css';
+        document.head.appendChild(link);
+      }
+    </script>
   </body>
 </html>
