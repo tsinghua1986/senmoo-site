@@ -1,8 +1,6 @@
 ---
 // Decision Lens - 内嵌子应用页面（独立全屏，不使用 Layout）
 // 需要登录后才能使用
-const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
 ---
 
 <!doctype html>
@@ -33,23 +31,22 @@ const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
         <p>正在检查登录状态...</p>
       </div>
     </div>
-    <script is:inline type="module" define:vars={{ supabaseUrl, supabaseAnonKey }}>
-      if (!supabaseUrl || supabaseUrl.includes('your-project')) {
-        loadApp();
-      } else {
-        import('https://esm.sh/@supabase/supabase-js@2').then(({ createClient }) => {
-          const supabase = createClient(supabaseUrl, supabaseAnonKey);
-          return supabase.auth.getUser();
-        }).then(({ data }) => {
-          if (!data?.user) {
-            document.getElementById('root').innerHTML = '<div class="dl-auth-check"><p>请先登录后再使用决策透镜</p><a href="/login">去登录</a></div>';
-          } else {
-            loadApp();
-          }
-        }).catch(() => {
+    <script is:inline type="module">
+      const SUPABASE_URL = 'https://qwkqotkazgqpzqtjecvu.supabase.co';
+      const SUPABASE_ANON_KEY = 'sb_publishable_yHdsg6K1ZON8QghpuhpElA_cptNP2MG';
+
+      import('https://esm.sh/@supabase/supabase-js@2').then(({ createClient }) => {
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        return supabase.auth.getUser();
+      }).then(({ data }) => {
+        if (!data?.user) {
+          document.getElementById('root').innerHTML = '<div class="dl-auth-check"><p>请先登录后再使用决策透镜</p><a href="/login">去登录</a></div>';
+        } else {
           loadApp();
-        });
-      }
+        }
+      }).catch(() => {
+        loadApp();
+      });
 
       function loadApp() {
         document.getElementById('dl-auth-message')?.remove();
