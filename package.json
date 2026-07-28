@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "astro dev",
     "dev:dl": "cd products/decision-lens && npm run dev",
-    "build:dl": "cd products/decision-lens && npm run build",
+    "build:dl": "cd products/decision-lens && npm install && npm run build",
     "copy:dl": "node scripts/copy-dl.js",
     "build": "npm run build:dl && npm run copy:dl && astro build",
     "preview": "astro preview"
