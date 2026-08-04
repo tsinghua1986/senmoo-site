@@ -1,0 +1,108 @@
+{
+  "summary": {
+    "projectName": "senmoo-site",
+    "locale": "zh-CN",
+    "modelId": "agent-work-loop-v4",
+    "reportContractVersion": 25,
+    "overview": "项目具备基本的构建和开发脚本链，但缺少测试覆盖、CI 自动化和项目级 Agent 指令，核心决策逻辑组件的变更验证完全依赖手动流程。",
+    "aiAgentPractice": {
+      "inspectedSurfaces": [],
+      "coverageRows": [
+        {
+          "surface": "Custom Agents",
+          "scopes": [
+            "Project"
+          ],
+          "count": 0
+        }
+      ]
+    },
+    "assignmentSummaries": [],
+    "dimensions": [
+      {
+        "id": "task-understanding",
+        "label": "任务理解",
+        "score": 55,
+        "summary": "目录结构和脚本命名隐含了模块边界，但无 AGENTS.md 或架构文档显式声明任务上下文和范围约束。",
+        "findingRefs": []
+      },
+      {
+        "id": "controlled-execution",
+        "label": "可控执行",
+        "score": 50,
+        "summary": "dev 和 build 脚本可用，但构建管线使用 npm install 而非 npm ci 导致不可复现构建，且无 doctor/reset 命令。",
+        "findingRefs": [
+          "build-reproducibility"
+        ]
+      },
+      {
+        "id": "change-validation",
+        "label": "改动验证",
+        "score": 40,
+        "summary": "子应用有 TypeScript 和 oxlint，但根项目 16 个 JS/JSX 文件无质量检查覆盖，整个项目零测试文件。",
+        "findingRefs": [
+          "root-quality-coverage-gap",
+          "core-component-zero-test"
+        ]
+      },
+      {
+        "id": "reliable-delivery",
+        "label": "可靠交付",
+        "score": 40,
+        "summary": "无 CI/CD 配置，无自动化合并门禁或部署验证，回滚依赖手动操作。",
+        "findingRefs": []
+      },
+      {
+        "id": "learning-capture",
+        "label": "经验沉淀",
+        "score": 35,
+        "summary": "零会话证据和零已配置知识资产，无法评估学习循环的有效性。",
+        "findingRefs": []
+      }
+    ]
+  },
+  "findings": [
+    {
+      "id": "build-reproducibility",
+      "title": "build:dl 脚本使用 npm install 导致构建不可复现",
+      "severity": "Medium",
+      "reason": "build:dl 脚本执行 cd products/decision-lens && npm install && npm run build。npm install 会按 package.json 版本范围解析依赖，可能升级子版本，绕过 package-lock.json 的锁定约束。不同时间点的构建可能产出不同产物，问题通常在部署时才暴露。此脚本在 11 天历史中已有 4 次提交（churn 58），表明管线处于活跃修改中。",
+      "expectedOutput": [
+        "构建脚本使用 npm ci 替代 npm install，确保每次构建使用相同的依赖版本。"
+      ],
+      "expectedArtifact": "package.json scripts",
+      "aiFixPrompt": "将 build:dl 脚本中的 npm install 替换为 npm ci，确保构建使用 package-lock.json 的精确依赖版本。\n\n## 验证\n\n- 运行 npm run build:dl 确认构建成功\n- 对比两次连续构建的产物哈希确认一致性",
+      "dimensionRefs": [
+        "controlled-execution"
+      ]
+    },
+    {
+      "id": "root-quality-coverage-gap",
+      "title": "根项目 16 个 JS/JSX 文件无 lint 和类型检查覆盖",
+      "severity": "Low",
+      "reason": "子应用 decision-lens 配置了 TypeScript 和 oxlint，但根 Astro 站点的 src/components/（含 AdminPanel.jsx、Nav.jsx 等）和 src/pages/ 下的管理页面均为纯 JS/JSX，无 lint 脚本、无 type-check。热点文件 Nav.jsx（4 commits, churn 159）正在频繁变更却无自动化质量检查。变更可在引入语法或逻辑问题时完全无反馈地合并。",
+      "expectedOutput": [
+        "根项目 JS/JSX 文件有 lint 覆盖，变更时可获得即时质量反馈。"
+      ],
+      "expectedArtifact": "ESLint/oxlint 配置和 package.json lint 脚本",
+      "aiFixPrompt": "为根项目添加 ESLint 或 oxlint 配置，并在 package.json 中添加 lint 脚本，使根项目的 JS/JSX 文件获得与子应用一致的质量检查覆盖。\n\n## 验证\n\n- 运行 lint 命令确认无报错或输出可操作的修复建议\n- 确认热点文件 Nav.jsx 和 AdminLayout.jsx 被覆盖",
+      "dimensionRefs": [
+        "change-validation"
+      ]
+    },
+    {
+      "id": "core-component-zero-test",
+      "title": "决策流程核心组件零测试且高流失率",
+      "severity": "Low",
+      "reason": "products/decision-lens/src/components/ 包含 6 个 Flow 组件和 3 个模型组件，构成应用核心业务逻辑。Stage1InputDump.tsx 以 churn 477 位居热点首位，表明逻辑正在频繁重构。整个子应用无任何测试文件或测试框架依赖。核心决策逻辑（因素加权、选项评分、象限分析）的正确性完全依赖手动验证。",
+      "expectedOutput": [
+        "核心决策逻辑组件有基础测试覆盖，重构时可获得回归反馈。"
+      ],
+      "expectedArtifact": "测试配置和核心组件测试文件",
+      "aiFixPrompt": "为 decision-lens 子应用添加测试框架（如 Vitest），并为高流失率的核心组件（Stage1InputDump、FranklinScale、WadmMatrix）编写基础单元测试。\n\n## 验证\n\n- 运行测试命令确认测试通过\n- 确认核心 Flow 和模型组件有基本覆盖",
+      "dimensionRefs": [
+        "change-validation"
+      ]
+    }
+  ]
+}

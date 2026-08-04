@@ -411,6 +411,10 @@ img { max-width: 100%; display: block; }
   background: rgba(217,169,60,0.08);
   color: #b48a1a;
 }
+.product-status.dev {
+  background: rgba(217,169,60,0.08);
+  color: #b48a1a;
+}
 .tool-card .tool-arrow {
   position: absolute; right: 32px; top: 32px;
   width: 36px; height: 36px; border-radius: 50%;
@@ -423,6 +427,95 @@ img { max-width: 100%; display: block; }
   background: linear-gradient(135deg, var(--grad-1), var(--grad-2));
   color: #fff;
   transform: translate(2px, -2px);
+}
+
+/* ===== PRODUCT TABS ===== */
+.product-tabs-section {
+  max-width: 720px; margin: 0 auto 80px;
+}
+.product-tabs {
+  display: flex; gap: 16px; margin-bottom: 32px;
+}
+.product-tab {
+  flex: 1; position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex; align-items: center; gap: 12px;
+  font-size: 1rem; font-weight: 500;
+  color: var(--text-secondary);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.product-tab:hover {
+  border-color: rgba(198,124,91,0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+.product-tab.active {
+  border-color: var(--grad-1);
+  color: var(--text-primary);
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(198,124,91,0.12);
+}
+.product-tab.active::after {
+  content: '';
+  position: absolute; bottom: -1px; left: 24px; right: 24px;
+  height: 3px; background: var(--grad-1);
+  border-radius: 3px 3px 0 0;
+}
+.product-tab-icon {
+  font-size: 1.4rem;
+}
+.product-tab-name {
+  flex: 1; text-align: left;
+}
+.product-tab-badge {
+  font-size: 0.7rem; padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(217,169,60,0.1);
+  color: #b48a1a;
+  font-weight: 500;
+}
+
+/* Product Detail */
+.product-detail {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 40px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  animation: productFadeIn 0.3s ease;
+}
+@keyframes productFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.product-detail-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.product-detail-title {
+  font-size: 1.5rem; font-weight: 700; margin: 0;
+}
+.product-detail-nameen {
+  font-size: 1rem; font-weight: 400;
+  color: var(--text-muted); margin-left: 8px;
+}
+.product-detail-desc {
+  color: var(--text-secondary);
+  font-size: 1.05rem; line-height: 1.8;
+  margin-bottom: 28px;
+}
+.product-detail-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.product-detail-btn.disabled {
+  opacity: 0.5; cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
 /* ===== DECISION LENS PREVIEW ===== */
