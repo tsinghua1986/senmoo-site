@@ -6,6 +6,7 @@ const PRODUCTS = [
     icon: '⚖',
     name: '决策透镜',
     nameEn: 'Decision Lens',
+    brief: '把模糊的纠结变成清晰的可视化对比',
     desc: '面对选择不知道怎么分析？决策透镜帮你把模糊的纠结变成清晰的可视化对比。支持单项决策、多方案对比、优先级排序三种模式。',
     status: 'live',
     statusText: '已上线',
@@ -17,6 +18,7 @@ const PRODUCTS = [
     icon: '',
     name: '图片反推提示词助手',
     nameEn: 'Prompt Reverse',
+    brief: 'AI 反推图片背后的绘画提示词',
     desc: '上传一张图片，AI 自动分析画面内容、风格、构图，反推出高质量的 AI 绘画提示词。支持 Midjourney、Stable Diffusion 等主流模型格式。',
     status: 'dev',
     statusText: '开发中',
@@ -30,7 +32,6 @@ export default function ProductTabs() {
   const product = PRODUCTS[active];
 
   const handleCardClick = (index, p) => {
-    // 未上线的产品不可点击
     if (p.status !== 'live') return;
     setActive(index);
   };
@@ -48,6 +49,7 @@ export default function ProductTabs() {
             <div className="product-card-icon">{p.icon}</div>
             <div className="product-card-info">
               <h3>{p.name}</h3>
+              <p className="product-card-brief">{p.brief}</p>
               <span className={`product-status ${p.status}`}>
                 {p.status === 'live' ? '●' : '○'} {p.statusText}
               </span>

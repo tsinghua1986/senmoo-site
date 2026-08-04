@@ -434,33 +434,27 @@ img { max-width: 100%; display: block; }
   max-width: 720px; margin: 0 auto 80px;
 }
 .product-tabs {
-  display: flex; gap: 16px; margin-bottom: 32px;
+  display: flex; gap: 24px; margin-bottom: 32px;
 }
 .product-card {
   flex: 1; position: relative;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 24px;
+  padding: 32px;
   cursor: pointer;
   transition: all 0.3s;
-  display: flex; align-items: center; gap: 16px;
+  display: flex; flex-direction: column; gap: 16px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 .product-card:hover {
   border-color: rgba(198,124,91,0.3);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.08);
 }
 .product-card.active {
   border-color: var(--grad-1);
-  box-shadow: 0 4px 16px rgba(198,124,91,0.12);
-}
-.product-card.active::after {
-  content: '';
-  position: absolute; bottom: -1px; left: 24px; right: 24px;
-  height: 3px; background: var(--grad-1);
-  border-radius: 3px 3px 0 0;
+  box-shadow: 0 8px 24px rgba(198,124,91,0.15);
 }
 .product-card.disabled {
   opacity: 0.6; cursor: not-allowed;
@@ -471,17 +465,28 @@ img { max-width: 100%; display: block; }
   box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 .product-card-icon {
-  width: 48px; height: 48px; border-radius: 12px;
+  width: 56px; height: 56px; border-radius: 14px;
   background: linear-gradient(135deg, var(--grad-1), var(--grad-2));
   display: flex; align-items: center; justify-content: center;
-  font-size: 1.4rem; flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(198,124,91,0.15);
+  font-size: 1.6rem; flex-shrink: 0;
+  box-shadow: 0 6px 16px rgba(198,124,91,0.2);
+}
+.product-card.disabled .product-card-icon {
+  background: linear-gradient(135deg, #ccc, #bbb);
+  box-shadow: none;
 }
 .product-card-info h3 {
-  font-size: 1.1rem; font-weight: 600; margin: 0 0 6px;
+  font-size: 1.15rem; font-weight: 600; margin: 0 0 8px;
   color: var(--text-primary);
 }
+.product-card-brief {
+  font-size: 0.85rem; color: var(--text-secondary);
+  margin: 0 0 10px; line-height: 1.5;
+}
 .product-card.disabled .product-card-info h3 {
+  color: var(--text-muted);
+}
+.product-card.disabled .product-card-brief {
   color: var(--text-muted);
 }
 
