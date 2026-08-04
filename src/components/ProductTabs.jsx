@@ -29,27 +29,35 @@ export default function ProductTabs() {
   const [active, setActive] = useState(0);
   const product = PRODUCTS[active];
 
+  const handleCardClick = (index, p) => {
+    // 未上线的产品不可点击
+    if (p.status !== 'live') return;
+    setActive(index);
+  };
+
   return (
     <div className="product-tabs-section">
-      {/* 横向产品卡片列表 */}
+      {/* 产品卡片列表 */}
       <div className="product-tabs">
         {PRODUCTS.map((p, i) => (
-          <button
+          <div
             key={p.id}
-            className={`product-tab${i === active ? ' active' : ''}`}
-            onClick={() => setActive(i)}
+            className={`product-card${i === active ? ' active' : ''}${p.status !== 'live' ? ' disabled' : ''}`}
+            onClick={() => handleCardClick(i, p)}
           >
-            <span className="product-tab-icon">{p.icon}</span>
-            <span className="product-tab-name">{p.name}</span>
-            {p.status === 'dev' && (
-              <span className="product-tab-badge">开发中</span>
-            )}
-          </button>
+            <div className="product-card-icon">{p.icon}</div>
+            <div className="product-card-info">
+              <h3>{p.name}</h3>
+              <span className={`product-status ${p.status}`}>
+                {p.status === 'live' ? '●' : '○'} {p.statusText}
+              </span>
+            </div>
+          </div>
         ))}
       </div>
 
       {/* 产品详情 */}
-      <div className="product-detail">
+      <div className="product-detail" key={active}>
         <div className="product-detail-header">
           <h3 className="product-detail-title">
             {product.name} <span className="product-detail-nameen">{product.nameEn}</span>

@@ -429,55 +429,60 @@ img { max-width: 100%; display: block; }
   transform: translate(2px, -2px);
 }
 
-/* ===== PRODUCT TABS ===== */
+/* ===== PRODUCT CARDS ===== */
 .product-tabs-section {
   max-width: 720px; margin: 0 auto 80px;
 }
 .product-tabs {
   display: flex; gap: 16px; margin-bottom: 32px;
 }
-.product-tab {
+.product-card {
   flex: 1; position: relative;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 20px 24px;
+  padding: 24px;
   cursor: pointer;
   transition: all 0.3s;
-  display: flex; align-items: center; gap: 12px;
-  font-size: 1rem; font-weight: 500;
-  color: var(--text-secondary);
+  display: flex; align-items: center; gap: 16px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
-.product-tab:hover {
+.product-card:hover {
   border-color: rgba(198,124,91,0.3);
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(0,0,0,0.06);
 }
-.product-tab.active {
+.product-card.active {
   border-color: var(--grad-1);
-  color: var(--text-primary);
-  font-weight: 600;
   box-shadow: 0 4px 16px rgba(198,124,91,0.12);
 }
-.product-tab.active::after {
+.product-card.active::after {
   content: '';
   position: absolute; bottom: -1px; left: 24px; right: 24px;
   height: 3px; background: var(--grad-1);
   border-radius: 3px 3px 0 0;
 }
-.product-tab-icon {
-  font-size: 1.4rem;
+.product-card.disabled {
+  opacity: 0.6; cursor: not-allowed;
 }
-.product-tab-name {
-  flex: 1; text-align: left;
+.product-card.disabled:hover {
+  border-color: var(--border);
+  transform: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
-.product-tab-badge {
-  font-size: 0.7rem; padding: 2px 8px;
-  border-radius: 999px;
-  background: rgba(217,169,60,0.1);
-  color: #b48a1a;
-  font-weight: 500;
+.product-card-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--grad-1), var(--grad-2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(198,124,91,0.15);
+}
+.product-card-info h3 {
+  font-size: 1.1rem; font-weight: 600; margin: 0 0 6px;
+  color: var(--text-primary);
+}
+.product-card.disabled .product-card-info h3 {
+  color: var(--text-muted);
 }
 
 /* Product Detail */
