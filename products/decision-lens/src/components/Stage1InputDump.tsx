@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { v4 as uuidv4 } from "uuid";
 import { createClient } from "@supabase/supabase-js";
@@ -31,6 +31,50 @@ export default function Stage1InputDump() {
   const [followUpAnswer, setFollowUpAnswer] = useState("");
   const [clarifyResult, setClarifyResult] = useState<Stage2Response | null>(null);
   const [showTransition, setShowTransition] = useState(false);
+
+  // 使用次数状态
+  const [usageCount, setUsageCount] = useState(0);
+  const [dailyLimit, setDailyLimit] = useState(10);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // 获取今日使用次数（北京时间 UTC+8）
+  const fetchUsage = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      setIsLoggedIn(false);
+      return;
+    }
+    setIsLoggedIn(true);
+
+    // 获取每日限制
+    const { data: configData } = await supabase
+      .from("app_config")
+      .select("value")
+      .eq("key", "daily_limit")
+      .single();
+    const limit = parseInt(configData?.value ?? "10", 10) || 10;
+    setDailyLimit(limit);
+
+    // 获取今日使用次数（北京时间）
+    const now = new Date();
+    const beijingTime = new Date(now.getTime() + 8 * 60 * 60 * 1000);
+    const today = beijingTime.toISOString().split("T")[0];
+    const { count } = await supabase
+      .from("usage_logs")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .gte("created_at", today);
+    setUsageCount(count || 0);
+  };
+
+  useEffect(() => {
+    fetchUsage();
+    // 监听登录状态变化
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+      fetchUsage();
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleSceneInject = (prompt: string) => {
     setText(prompt);
@@ -79,6 +123,18 @@ export default function Stage1InputDump() {
     doSubmit();
   };
 
+  // 记录使用次数
+  const recordUsage = async (decisionType: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    await supabase.from("usage_logs").insert({
+      user_id: user.id,
+      decision_type: decisionType || "unknown",
+    });
+    // 更新显示
+    setUsageCount((prev) => prev + 1);
+  };
+
   const doSubmit = async () => {
     if (!canSubmit || loading) return;
     dispatch({ type: "SET_RAW_INPUT", payload: text });
@@ -91,11 +147,15 @@ export default function Stage1InputDump() {
         // AI has a follow-up question - show it, don't advance
         setClarifyResult(result);
         setFollowUp(result.followUpQuestion);
+        // 记录使用次数
+        await recordUsage(result.decisionType || "unknown");
       } else {
         // No follow-up - show transition card then advance
         dispatchResult(result);
         setShowTransition(true);
         trackEvent("stage_completed", { stage: 1 });
+        // 记录使用次数
+        await recordUsage(result.decisionType || "unknown");
       }
     } catch (err) {
       const msg =
@@ -326,6 +386,12 @@ export default function Stage1InputDump() {
       {/* Submit Button */}
       {!followUp && (
         <>
+          {/* 使用次数显示（仅登录用户可见） */}
+          {isLoggedIn && (
+            <div className="text-center text-sm text-gray-400 mb-3">
+              今日已用 {usageCount}/{dailyLimit} 次，限制次数每日0点重置。
+            </div>
+          )}
           <button
             onClick={handleSubmit}
             disabled={!canSubmit || loading}

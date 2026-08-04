@@ -41,9 +41,11 @@ export async function signOut() {
   return { error };
 }
 
-// 获取今日使用次数
+// 获取今日使用次数（按北京时间 UTC+8 计算）
 export async function getTodayUsage(userId: string): Promise<number> {
-  const today = new Date().toISOString().split('T')[0];
+  const now = new Date();
+  const beijingTime = new Date(now.getTime() + 8 * 60 * 60 * 1000);
+  const today = beijingTime.toISOString().split('T')[0];
   const { count, error } = await supabase
     .from('usage_logs')
     .select('*', { count: 'exact', head: true })
