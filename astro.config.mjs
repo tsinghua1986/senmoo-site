@@ -29,6 +29,12 @@ function dlProxyPlugin() {
         }
         forwardHeaders['host'] = new URL(targetUrl).host;
 
+        // Replace Authorization header with server-side API key
+        const serverApiKey = process.env.DEEPSEEK_API_KEY;
+        if (serverApiKey) {
+          forwardHeaders['authorization'] = `Bearer ${serverApiKey}`;
+        }
+
         const chunks = [];
         req.on('data', (chunk) => chunks.push(chunk));
         req.on('end', () => {

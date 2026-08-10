@@ -9,8 +9,14 @@ const DEEPSEEK_ENDPOINT = 'https://api.deepseek.com/v1/chat/completions';
 export const onRequestPost = async (context) => {
   const { request, env } = context;
 
-  // Get API key: prefer env variable, fallback to built-in key
-  const apiKey = env.DEEPSEEK_API_KEY || 'sk-1146afeb19f74274b55b9ebb0e9eb00b';
+  // Get API key from Cloudflare Pages environment variable
+  const apiKey = env.DEEPSEEK_API_KEY;
+  if (!apiKey) {
+    return new Response(JSON.stringify({ error: 'API key not configured' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 
   // Determine target: use x-dl-target header if present, otherwise DeepSeek
   const targetHeader = request.headers.get('x-dl-target');
