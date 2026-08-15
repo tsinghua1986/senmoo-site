@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, useEffect, useRef, type ReactNode } from 'react';
+import { createContext, useContext, useReducer, useEffect, useRef, useState, type ReactNode } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import type { DecisionContext, DecisionType, FlowFactor, FranklinData, FranklinItem, WadmData, EisenhowerData, ActionPlan, DialogueMessage, ApiConfig } from '../types';
 import { API_CONFIG } from '../config';
@@ -320,6 +320,10 @@ export function DecisionProvider({ children }: { children: ReactNode }) {
     false
   );
 
+  // 仅在页面加载时检查一次是否有可恢复的会话
+  // 避免当前会话中自动保存后重复触发恢复弹窗
+  const [initialRestorable] = useState(() => hasRestorableSession());
+
   const markSessionRestored = () => setSessionRestored(true);
 
   // Auto-save state to LocalStorage with capacity check
@@ -338,7 +342,7 @@ export function DecisionProvider({ children }: { children: ReactNode }) {
     prevStageRef.current = state.currentStage;
   }, [state]);
 
-  const restorable = hasRestorableSession() && !sessionRestored;
+  const restorable = initialRestorable && !sessionRestored;
 
   return (
     <DecisionContextObj.Provider value={{ state, dispatch, apiConfig: API_CONFIG, hasRestorableSession: restorable, sessionRestored, markSessionRestored }}>
