@@ -6,20 +6,35 @@ import AuthModal from './auth/AuthModal';
 export default function Nav({ currentPath = '/' }) {
   const allLinks = [
     { label: '首页', href: '/', always: true },
-    { label: '关于我', href: '/about', module: 'about' },
+    { label: '关于我', href: '/about', dynamic: 'show_about' },
     { label: 'AI产品', href: '/tools', module: 'decisionLens' },
   ];
-  const navLinks = allLinks.filter(
-    (link) => link.always || SITE_CONFIG.modules[link.module]
-  );
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState(null);
+  const [showAbout, setShowAbout] = useState(false);
   const [authModal, setAuthModal] = useState(null); // null | 'login' | 'register'
+
+  const navLinks = allLinks.filter(
+    (link) => link.always || (link.dynamic === 'show_about' ? showAbout : SITE_CONFIG.modules[link.module])
+  );
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // 从后台配置读取“关于我”显隐开关（默认隐藏）
+  useEffect(() => {
+    supabase
+      .from('app_config')
+      .select('value')
+      .eq('key', 'show_about')
+      .single()
+      .then(({ data }) => {
+        setShowAbout(data?.value === 'true');
+      })
+      .catch(() => setShowAbout(false));
   }, []);
 
   useEffect(() => {

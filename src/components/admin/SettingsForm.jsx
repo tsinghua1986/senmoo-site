@@ -140,6 +140,19 @@ export default function SettingsForm() {
               <option value="false">否</option>
             </select>
           </div>
+          <div className="admin-setting-row">
+            <div className="admin-setting-info">
+              <label>显示“关于我”</label>
+              <span className="admin-setting-desc">开启后前端导航栏显示“关于我”入口</span>
+            </div>
+            <select
+              value={config.show_about || 'false'}
+              onChange={(e) => updateConfig('show_about', e.target.value)}
+            >
+              <option value="true">显示</option>
+              <option value="false">隐藏</option>
+            </select>
+          </div>
         </div>
       </div>
 
